@@ -35,9 +35,16 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           <Link
             to="/"
-            className="text-2xl font-playfair font-bold heading-gradient"
+            className="flex items-center space-x-2"
           >
-            Practical AIML
+            <img 
+              src="/lovable-uploads/6fa61244-de1a-4b9f-93bf-5fa60ca0bd73.png" 
+              alt="Practical AIML Logo" 
+              className="h-10 w-10"
+            />
+            <span className="text-2xl font-playfair font-bold heading-gradient">
+              Practical AIML
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
