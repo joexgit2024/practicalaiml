@@ -5,35 +5,60 @@ const About = () => {
       {/* Personal Bio Section */}
       <section className="section-padding">
         <div className="container">
-          {/* Bio content will go here */}
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Personal Bio</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Meet the minds behind our AI consultancy
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Mission Section */}
       <section className="section-padding bg-muted">
         <div className="container">
-          {/* Mission content will go here */}
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Mission</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Empowering businesses through artificial intelligence
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Team Members Section */}
       <section className="section-padding">
         <div className="container">
-          {/* Team members grid will go here */}
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Team</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Expert professionals dedicated to your success
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Awards Section */}
       <section className="section-padding bg-muted">
         <div className="container">
-          {/* Awards content will go here */}
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Awards & Recognition</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Our achievements in AI and machine learning
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Certifications Section */}
       <section className="section-padding">
         <div className="container">
-          {/* Certifications content will go here */}
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Certifications</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Industry certifications and partnerships
+            </p>
+          </div>
         </div>
       </section>
     </main>
