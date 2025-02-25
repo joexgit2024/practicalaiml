@@ -22,6 +22,9 @@ const Contact = () => {
             <p className="text-lg text-muted-foreground mb-8">
               Have a question or ready to start your project?
             </p>
+            <p className="text-lg text-muted-foreground mb-8">
+              support@practicalaiml.com.au
+            </p>
           </div>
         </div>
       </section>
