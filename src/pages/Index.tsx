@@ -16,7 +16,7 @@ const Index = () => {
               Transform Your Business with AI Solutions
             </h1>
             <p className="text-lg text-muted-foreground mb-8 animate-slide-up">
-              We help businesses in Sydney leverage the power of AI and machine learning
+              We help businesses leverage the power of practical AI and machine learning
               to achieve breakthrough results.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
