@@ -37,7 +37,7 @@ const Navbar = () => {
             to="/"
             className="text-2xl font-playfair font-bold heading-gradient"
           >
-            Practial AIML
+            Practical AIML
           </Link>
 
           {/* Desktop Navigation */}
