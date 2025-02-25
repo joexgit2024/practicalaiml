@@ -37,7 +37,7 @@ const Navbar = () => {
             to="/"
             className="text-2xl font-playfair font-bold heading-gradient"
           >
-            AI Sydney
+            Practial AIML
           </Link>
 
           {/* Desktop Navigation */}
