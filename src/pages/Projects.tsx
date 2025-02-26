@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, Box, BarChart2, AlertTriangle, Timer } from "lucide-react";
+import { Globe, Box, BarChart2, AlertTriangle, Timer, Truck, Brain } from "lucide-react";
 
 interface ProjectCard {
   title: string;
@@ -30,6 +30,36 @@ const projects: ProjectCard[] = [
       "Shipment Delay Prediction: AI-powered forecasting of delays using weather and traffic data",
       "Geospatial Supply Chain Mapping: Interactive visualization of supply chain nodes and dependencies",
       "Risk Mitigation Planning: Simulation of alternate sourcing and routing scenarios"
+    ]
+  },
+  {
+    title: "Last-Mile Delivery Orchestrator",
+    description: "A comprehensive suite of applications designed to optimize last-mile delivery operations, enhance customer satisfaction, and improve driver experience.",
+    icon: <Truck className="w-10 h-10 text-primary" />,
+    url: "https://last-mile-orchestrator.lovable.app/",
+    tags: ["Logistics", "Delivery", "Optimization"],
+    features: [
+      "Customer Satisfaction Feedback Tracker: Real-time feedback analysis for continuous improvement",
+      "Driver-Friendly Route Builder: Smart routing with rest stops and driver preferences",
+      "Crowdsourced Returns Pickup: Efficient return logistics through local driver network",
+      "Vehicle Loading Optimizer: AI-powered loading sequence optimization",
+      "Urban Hub Selector: Strategic micro-fulfillment hub placement for urban deliveries"
+    ]
+  },
+  {
+    title: "Invent AI",
+    description: "A revolutionary inventory management system powered by advanced AI, natural language processing, and reinforcement learning for optimal stock control and cost reduction.",
+    icon: <Brain className="w-10 h-10 text-primary" />,
+    url: "https://invent-ai.lovable.app/",
+    tags: ["Inventory", "AI", "NLP"],
+    features: [
+      "Natural Language Database Query: Ask questions about inventory in plain English",
+      "Cost Optimization Scenarios: AI-driven simulations for inventory cost reduction",
+      "Supply Chain What-If Analysis: Test different inventory strategies with predictive modeling",
+      "Reinforcement Learning Optimization: Continuously improving stock level recommendations",
+      "Demand Forecasting: Advanced ML models for accurate stock predictions",
+      "Automated Reordering: Smart reorder point calculation using multiple variables",
+      "Inventory Health Analytics: Real-time monitoring of stock performance metrics"
     ]
   }
 ];
