@@ -1,3 +1,4 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,9 +29,14 @@ const Contact = () => {
   const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
     try {
+      // Fixed: Passing a single object instead of an array, with required fields
       const { error } = await supabase
         .from("contact_submissions")
-        .insert([data]);
+        .insert({
+          email: data.email,
+          message: data.message,
+          status: 'pending' as const,
+        });
 
       if (error) throw error;
 
