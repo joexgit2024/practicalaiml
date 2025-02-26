@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      active_shipments: {
+        Row: {
+          created_at: string | null
+          date: string | null
+          destination: string
+          id: string
+          origin: string
+          status: string
+          type: string
+          weight: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string | null
+          destination: string
+          id?: string
+          origin: string
+          status?: string
+          type: string
+          weight: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string | null
+          destination?: string
+          id?: string
+          origin?: string
+          status?: string
+          type?: string
+          weight?: string
+        }
+        Relationships: []
+      }
       aging_inventory_forecasts: {
         Row: {
           clearance_recommendation: boolean | null
