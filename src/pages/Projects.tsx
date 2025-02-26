@@ -8,6 +8,7 @@ interface ProjectCard {
   icon: React.ReactNode;
   url: string;
   tags: string[];
+  features?: string[];
 }
 
 const projects: ProjectCard[] = [
@@ -19,32 +20,17 @@ const projects: ProjectCard[] = [
     tags: ["Logistics", "Cost Optimization", "AI"]
   },
   {
-    title: "Disruption Impact Analyzer",
-    description: "Models the financial and operational impact of supply chain disruptions using advanced analytics.",
+    title: "Supply Chain Sentinel",
+    description: "A comprehensive supply chain management platform that combines risk analysis, delay prediction, visualization, and scenario planning in one powerful solution.",
     icon: <AlertTriangle className="w-10 h-10 text-primary" />,
     url: "https://supply-chain-sentinel.lovable.app/auth",
-    tags: ["Risk Analysis", "Financial Modeling", "Supply Chain"]
-  },
-  {
-    title: "Shipment Delay Predictor",
-    description: "Uses AI to forecast potential delays based on historical data and external factors like weather and traffic conditions.",
-    icon: <Timer className="w-10 h-10 text-primary" />,
-    url: "https://supply-chain-sentinel.lovable.app/auth",
-    tags: ["AI Forecasting", "Logistics", "Real-time"]
-  },
-  {
-    title: "Geospatial Supply Chain Mapper",
-    description: "Visualizes supply chain nodes and their dependencies on a global map for better decision making.",
-    icon: <Globe className="w-10 h-10 text-primary" />,
-    url: "https://supply-chain-sentinel.lovable.app/auth",
-    tags: ["Visualization", "Mapping", "Supply Chain"]
-  },
-  {
-    title: "Risk Mitigation Scenario Planner",
-    description: "Simulates alternate sourcing or routing scenarios for high-risk situations to ensure business continuity.",
-    icon: <BarChart2 className="w-10 h-10 text-primary" />,
-    url: "https://supply-chain-sentinel.lovable.app/auth",
-    tags: ["Risk Management", "Simulation", "Planning"]
+    tags: ["Supply Chain", "Risk Management", "AI"],
+    features: [
+      "Disruption Impact Analysis: Model financial and operational impacts of supply chain disruptions",
+      "Shipment Delay Prediction: AI-powered forecasting of delays using weather and traffic data",
+      "Geospatial Supply Chain Mapping: Interactive visualization of supply chain nodes and dependencies",
+      "Risk Mitigation Planning: Simulation of alternate sourcing and routing scenarios"
+    ]
   }
 ];
 
@@ -73,7 +59,7 @@ const Projects = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {projects.map((project, index) => (
               <a
                 key={index}
@@ -87,7 +73,7 @@ const Projects = () => {
                     <div className="flex items-center justify-between mb-2">
                       {project.icon}
                       <div className="flex gap-2">
-                        {project.tags.slice(0, 2).map((tag, tagIndex) => (
+                        {project.tags.slice(0, 3).map((tag, tagIndex) => (
                           <span
                             key={tagIndex}
                             className="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary"
@@ -97,14 +83,26 @@ const Projects = () => {
                         ))}
                       </div>
                     </div>
-                    <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                    <CardTitle className="text-2xl group-hover:text-primary transition-colors">
                       {project.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-sm text-muted-foreground line-clamp-3">
+                  <CardContent className="space-y-4">
+                    <CardDescription className="text-sm text-muted-foreground">
                       {project.description}
                     </CardDescription>
+                    {project.features && (
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-sm">Key Features:</h4>
+                        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+                          {project.features.map((feature, idx) => (
+                            <li key={idx} className="leading-relaxed">
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </a>
