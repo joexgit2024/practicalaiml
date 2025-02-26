@@ -80,6 +80,12 @@ const Contact = () => {
               <p className="text-lg text-muted-foreground">
                 Have a question or ready to start your project?
               </p>
+              <p className="text-lg text-muted-foreground">
+                send your comments, requests, suggestions to support@practicalaiml.com.au 
+              </p>
+              <p className="text-lg text-muted-foreground">
+                or fill the form below, thanks 
+              </p>
             </div>
             
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
