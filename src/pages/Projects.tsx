@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Globe, Box, BarChart2, AlertTriangle, Timer, Truck, Brain } from "lucide-react";
 
@@ -54,15 +53,14 @@ const projects: ProjectCard[] = [
       "Automated Reordering: Smart reorder point calculation using multiple variables",
       "Inventory Health Analytics: Real-time monitoring of stock performance metrics"
     ]
-  }
-
+  },
   {
     title: "Freight Consolidation Planner",
     description: "An AI-powered solution that helps combine multiple shipments into a single truck or container to reduce costs for IT industry in Asia.",
     icon: <Box className="w-10 h-10 text-primary" />,
     url: "https://freight-harmony-synergy.lovable.app/",
     tags: ["Logistics", "Cost Optimization", "AI"]
-  },
+  }
 ];
 
 const Projects = () => {
