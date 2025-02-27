@@ -13,17 +13,10 @@ interface ProjectCard {
 
 const projects: ProjectCard[] = [
   {
-    title: "Freight Consolidation Planner",
-    description: "An AI-powered solution that helps combine multiple shipments into a single truck or container to reduce costs for IT industry in Asia.",
-    icon: <Box className="w-10 h-10 text-primary" />,
-    url: "https://freight-harmony-synergy.lovable.app/",
-    tags: ["Logistics", "Cost Optimization", "AI"]
-  },
-  {
     title: "Supply Chain Sentinel",
     description: "A comprehensive supply chain management platform that combines risk analysis, delay prediction, visualization, and scenario planning in one powerful solution.",
     icon: <AlertTriangle className="w-10 h-10 text-primary" />,
-    url: "https://supply-chain-sentinel.lovable.app/auth",
+    url: "https://supply-chain-sentinel.lovable.app/",
     tags: ["Supply Chain", "Risk Management", "AI"],
     features: [
       "Disruption Impact Analysis: Model financial and operational impacts of supply chain disruptions",
@@ -62,6 +55,14 @@ const projects: ProjectCard[] = [
       "Inventory Health Analytics: Real-time monitoring of stock performance metrics"
     ]
   }
+
+  {
+    title: "Freight Consolidation Planner",
+    description: "An AI-powered solution that helps combine multiple shipments into a single truck or container to reduce costs for IT industry in Asia.",
+    icon: <Box className="w-10 h-10 text-primary" />,
+    url: "https://freight-harmony-synergy.lovable.app/",
+    tags: ["Logistics", "Cost Optimization", "AI"]
+  },
 ];
 
 const Projects = () => {
