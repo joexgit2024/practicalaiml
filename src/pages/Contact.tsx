@@ -26,7 +26,7 @@ const Contact = () => {
                   <div className="flex flex-col items-center">
                     <Phone className="w-12 h-12 text-primary mb-4" />
                     <h3 className="text-xl font-semibold mb-2">Phone</h3>
-                    <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                    <p className="text-muted-foreground">0437 443 634</p>
                   </div>
                 </CardContent>
               </Card>
@@ -36,7 +36,7 @@ const Contact = () => {
                   <div className="flex flex-col items-center">
                     <Mail className="w-12 h-12 text-primary mb-4" />
                     <h3 className="text-xl font-semibold mb-2">Email</h3>
-                    <p className="text-muted-foreground">info@aicompany.com</p>
+                    <p className="text-muted-foreground">support@practicalaiml.com.au</p>
                   </div>
                 </CardContent>
               </Card>
