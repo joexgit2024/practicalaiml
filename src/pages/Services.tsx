@@ -1,3 +1,4 @@
+
 import { Brain, Code, Database, Network, Bot, Shield, ChartLine, Cloud, FileText, GraduationCap, Settings, Puzzle, Users, Rocket, DollarSign, Lock, Boxes, Scale, HeartHandshake, Truck, Route, TrendingUp, AlertTriangle, Package, BoxSelect } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -224,26 +225,26 @@ const Services = () => {
       </section>
 
       {/* Supply Chain Optimization Section */}
-      <section className="py-16 bg-[#8B5CF6] text-white">
+      <section className="py-16">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Supply Chain Optimization with AI</h2>
-            <p className="text-lg opacity-90 mb-4">
+            <p className="text-lg text-muted-foreground mb-4">
               Revolutionize your supply chain operations with AI-driven solutions designed to enhance efficiency, reduce costs, and improve decision-making.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {supplyChainFeatures.map((feature, index) => (
-              <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all">
+              <Card key={index} className="hover:shadow-lg transition-all">
                 <CardHeader>
                   <div className="flex flex-col items-center text-center">
-                    {feature.icon}
-                    <CardTitle className="mt-4 text-xl text-white">{feature.title}</CardTitle>
+                    <div className="text-primary">{feature.icon}</div>
+                    <CardTitle className="mt-4 text-xl">{feature.title}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-center text-white/80">
+                  <p className="text-center text-muted-foreground">
                     {feature.description}
                   </p>
                 </CardContent>
@@ -253,7 +254,7 @@ const Services = () => {
 
           <div className="mt-12 text-center">
             <p className="text-lg font-semibold mb-4">Why Choose Us?</p>
-            <p className="max-w-2xl mx-auto text-white/90">
+            <p className="max-w-2xl mx-auto text-muted-foreground">
               Our AI solutions are tailored to the unique challenges of supply chain management, helping you build a resilient, agile, and future-ready supply chain.
             </p>
           </div>
