@@ -19,8 +19,13 @@ const About = () => {
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Mission</h2>
+            <h3 className="text-xl md:text-2xl font-semibold mb-6 text-primary">
+              Empowering Businesses Through Artificial Intelligence
+            </h3>
             <p className="text-lg text-muted-foreground mb-8">
-              Empowering businesses through artificial intelligence
+              We apply a practical, results-driven approach to quickly identify opportunities, 
+              deliver tailored solutions, and drive measurable improvements—all with a focus 
+              on continuous innovation and growth at the core of everything we do.
             </p>
           </div>
         </div>
