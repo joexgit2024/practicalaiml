@@ -1,5 +1,5 @@
 
-import { Brain, Code, Database, Network, Robot, Shield, ChartLine, Cloud, FileText, GraduationCap, Settings } from "lucide-react";
+import { Brain, Code, Database, Network, Bot, Shield, ChartLine, Cloud, FileText, GraduationCap, Settings } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Services = () => {
@@ -15,7 +15,7 @@ const Services = () => {
     },
     {
       title: "Machine Learning Model Development",
-      icon: <Robot className="w-8 h-8 text-primary" />,
+      icon: <Bot className="w-8 h-8 text-primary" />,
       services: [
         "Custom ML model design, development, and deployment",
         "Predictive analytics and forecasting solutions",
