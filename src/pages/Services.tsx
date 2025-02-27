@@ -1,4 +1,4 @@
-import { Brain, Code, Database, Network, Bot, Shield, ChartLine, Cloud, FileText, GraduationCap, Settings, Puzzle, Users, Rocket, DollarSign, Lock, Boxes, Scale, HeartHandshake } from "lucide-react";
+import { Brain, Code, Database, Network, Bot, Shield, ChartLine, Cloud, FileText, GraduationCap, Settings, Puzzle, Users, Rocket, DollarSign, Lock, Boxes, Scale, HeartHandshake, Truck, Route, TrendingUp, AlertTriangle, Package, BoxSelect } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Services = () => {
@@ -75,6 +75,39 @@ const Services = () => {
     {
       title: "Manufacturing",
       services: ["Predictive maintenance", "Quality control via computer vision"]
+    }
+  ];
+
+  const supplyChainFeatures = [
+    {
+      icon: <Package className="w-8 h-8 text-white" />,
+      title: "Natural Language Query",
+      description: "Ask complex supply chain questions in plain language and get instant, actionable insights."
+    },
+    {
+      icon: <TrendingUp className="w-8 h-8 text-white" />,
+      title: "AI-Assisted Scenario Planning",
+      description: "Simulate 'what-if' scenarios to predict outcomes, optimize inventory, and mitigate risks."
+    },
+    {
+      icon: <ChartLine className="w-8 h-8 text-white" />,
+      title: "Demand Forecasting",
+      description: "Leverage predictive analytics to anticipate market demands and align supply chain operations."
+    },
+    {
+      icon: <AlertTriangle className="w-8 h-8 text-white" />,
+      title: "Real-Time Monitoring",
+      description: "Gain visibility into your supply chain with real-time tracking and AI-powered alerts for disruptions."
+    },
+    {
+      icon: <BoxSelect className="w-8 h-8 text-white" />,
+      title: "Supplier Risk Assessment",
+      description: "Use AI to evaluate supplier performance and identify potential risks before they impact your operations."
+    },
+    {
+      icon: <Route className="w-8 h-8 text-white" />,
+      title: "Route Optimization",
+      description: "Automate logistics planning with AI-driven route optimization for faster, cost-effective deliveries."
     }
   ];
 
@@ -186,6 +219,43 @@ const Services = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Supply Chain Optimization Section */}
+      <section className="py-16 bg-[#8B5CF6] text-white">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Supply Chain Optimization with AI</h2>
+            <p className="text-lg opacity-90 mb-4">
+              Revolutionize your supply chain operations with AI-driven solutions designed to enhance efficiency, reduce costs, and improve decision-making.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {supplyChainFeatures.map((feature, index) => (
+              <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all">
+                <CardHeader>
+                  <div className="flex flex-col items-center text-center">
+                    {feature.icon}
+                    <CardTitle className="mt-4 text-xl text-white">{feature.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-center text-white/80">
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-lg font-semibold mb-4">Why Choose Us?</p>
+            <p className="max-w-2xl mx-auto text-white/90">
+              Our AI solutions are tailored to the unique challenges of supply chain management, helping you build a resilient, agile, and future-ready supply chain.
+            </p>
           </div>
         </div>
       </section>
