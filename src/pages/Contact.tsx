@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ChatDialog from "@/components/ChatDialog";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ const Contact = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +84,10 @@ const Contact = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card 
+                className="cursor-pointer transition-transform hover:scale-105"
+                onClick={() => setIsChatOpen(true)}
+              >
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center">
                     <MessageSquare className="w-12 h-12 text-primary mb-4" />
@@ -255,6 +260,9 @@ const Contact = () => {
           </div>
         </div>
       </section>
+
+      {/* Chat Dialog */}
+      <ChatDialog open={isChatOpen} onOpenChange={setIsChatOpen} />
     </main>
   );
 };
