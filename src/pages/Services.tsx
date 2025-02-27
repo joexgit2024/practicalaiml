@@ -1,5 +1,4 @@
-
-import { Brain, Code, Database, Network, Bot, Shield, ChartLine, Cloud, FileText, GraduationCap, Settings } from "lucide-react";
+import { Brain, Code, Database, Network, Bot, Shield, ChartLine, Cloud, FileText, GraduationCap, Settings, Puzzle, Users, Rocket, DollarSign, Lock, Boxes, Scale, HeartHandshake } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Services = () => {
@@ -79,6 +78,49 @@ const Services = () => {
     }
   ];
 
+  const keyBenefits = [
+    {
+      icon: <Puzzle className="w-8 h-8 text-primary" />,
+      title: "Tailored AI Solutions",
+      description: "Custom AI solutions aligned perfectly with your unique business objectives and challenges."
+    },
+    {
+      icon: <Shield className="w-8 h-8 text-primary" />,
+      title: "End-to-End Expertise",
+      description: "Comprehensive AI services from strategy to implementation and ongoing support."
+    },
+    {
+      icon: <ChartLine className="w-8 h-8 text-primary" />,
+      title: "Proven Industry Experience",
+      description: "Successful track record across retail, healthcare, finance, and manufacturing sectors."
+    },
+    {
+      icon: <Rocket className="w-8 h-8 text-primary" />,
+      title: "Future-Ready Technology",
+      description: "Leveraging latest AI advancements including generative AI, computer vision, and NLP."
+    },
+    {
+      icon: <Lock className="w-8 h-8 text-primary" />,
+      title: "Enterprise-Grade Security",
+      description: "Industry-leading security protocols and best practices for robust protection."
+    },
+    {
+      icon: <Boxes className="w-8 h-8 text-primary" />,
+      title: "Seamless Integration",
+      description: "Smooth integration with existing systems, minimizing disruption and maximizing ROI."
+    },
+    {
+      icon: <Scale className="w-8 h-8 text-primary" />,
+      title: "Cost-Effective & Scalable",
+      description: "High-impact solutions that fit your budget and grow with your business."
+    },
+    {
+      icon: <HeartHandshake className="w-8 h-8 text-primary" />,
+      title: "Dedicated Partnership",
+      description: "Your trusted AI partner throughout your digital transformation journey."
+    }
+  ];
+
   return (
     <main className="pt-20">
       {/* Services List Section */}
@@ -148,13 +190,46 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Call to Action Section */}
+      {/* Key Benefits Section */}
       <section className="py-16">
         <div className="container">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Key Benefits</h2>
+            <p className="text-lg text-muted-foreground mb-4">
+              Why Choose Our AI Consulting Services
+            </p>
+            <p className="text-muted-foreground">
+              At Practical AIML, we are committed to delivering cutting-edge AI solutions that drive innovation, efficiency, and growth for your business.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {keyBenefits.map((benefit, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex flex-col items-center text-center">
+                    {benefit.icon}
+                    <CardTitle className="mt-4 text-xl">{benefit.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-center text-muted-foreground">
+                    {benefit.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-16 bg-muted">
+        <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Get Started?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Business with AI?</h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Transform your business with our AI solutions today
+              Let's build the future together. Contact us today to schedule a free consultation and discover how our AI consulting services can unlock new possibilities for your business.
             </p>
           </div>
         </div>
