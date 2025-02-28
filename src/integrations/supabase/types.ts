@@ -169,6 +169,33 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_conversations: {
+        Row: {
+          ai_response: string
+          created_at: string
+          customer_message: string
+          id: string
+          session_id: string
+          user_email: string | null
+        }
+        Insert: {
+          ai_response: string
+          created_at?: string
+          customer_message: string
+          id?: string
+          session_id: string
+          user_email?: string | null
+        }
+        Update: {
+          ai_response?: string
+          created_at?: string
+          customer_message?: string
+          id?: string
+          session_id?: string
+          user_email?: string | null
+        }
+        Relationships: []
+      }
       commercial_customer: {
         Row: {
           address: string | null

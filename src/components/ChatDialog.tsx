@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -21,6 +22,7 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>(uuidv4());
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -29,6 +31,35 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Generate a new session ID when the dialog opens
+  useEffect(() => {
+    if (open) {
+      if (messages.length === 0) {
+        sessionIdRef.current = uuidv4();
+      }
+    }
+  }, [open, messages.length]);
+
+  const recordConversation = async (userMessage: string, aiResponse: string) => {
+    try {
+      const { error } = await supabase
+        .from('chat_conversations')
+        .insert([
+          {
+            customer_message: userMessage,
+            ai_response: aiResponse,
+            session_id: sessionIdRef.current
+          }
+        ]);
+
+      if (error) {
+        console.error('Error recording conversation:', error);
+      }
+    } catch (error) {
+      console.error('Failed to record conversation:', error);
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -45,10 +76,15 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
 
       if (error) throw error;
 
+      const aiResponse = data.response;
+      
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: data.response 
+        content: aiResponse 
       }]);
+
+      // Record the conversation
+      await recordConversation(userMessage, aiResponse);
     } catch (error) {
       console.error('Chat error:', error);
       toast.error('Failed to send message. Please try again.');
@@ -67,9 +103,9 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col p-0">
-        <div className="p-6 bg-primary text-primary-foreground">
+        <div className="p-6">
           <h2 className="text-2xl font-semibold">Live Chat Support</h2>
-          <p className="text-sm opacity-90">
+          <p className="text-sm text-muted-foreground">
             Ask us anything about our services
           </p>
         </div>
