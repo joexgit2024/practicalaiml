@@ -1,5 +1,6 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, Box, BarChart2, AlertTriangle, Timer, Truck, Brain } from "lucide-react";
+import { Globe, Box, BarChart2, AlertTriangle, Truck, Brain, ShoppingCart, Stethoscope, DollarSign, Factory } from "lucide-react";
 
 interface ProjectCard {
   title: string;
@@ -22,6 +23,58 @@ const projects: ProjectCard[] = [
       "Shipment Delay Prediction: AI-powered forecasting of delays using weather and traffic data",
       "Geospatial Supply Chain Mapping: Interactive visualization of supply chain nodes and dependencies",
       "Risk Mitigation Planning: Simulation of alternate sourcing and routing scenarios"
+    ]
+  },
+  {
+    title: "Retail Rhythm AI",
+    description: "An intelligent retail platform that tackles personalization and inventory management challenges through advanced AI/ML solutions.",
+    icon: <ShoppingCart className="w-10 h-10 text-primary" />,
+    url: "https://retail-rhythm-ai.lovable.app/",
+    tags: ["Retail", "E-commerce", "Personalization"],
+    features: [
+      "Collaborative Filtering: Sophisticated recommendation engine that analyzes purchase patterns",
+      "NLP-Powered Review Analysis: Extract valuable insights from customer feedback to improve recommendations",
+      "Time-Series Forecasting: Use LSTM and Prophet models for accurate demand prediction",
+      "Dynamic Pricing Optimization: Reinforcement learning to optimize pricing and promotions strategy"
+    ]
+  },
+  {
+    title: "Diagnose Pathway",
+    description: "A healthcare AI solution that addresses challenges in medical diagnostics and predictive patient outcomes while maintaining data privacy and regulatory compliance.",
+    icon: <Stethoscope className="w-10 h-10 text-primary" />,
+    url: "https://diagnose-pathway.lovable.app/",
+    tags: ["Healthcare", "Diagnostics", "Privacy"],
+    features: [
+      "CNN Medical Imaging Analysis: Advanced detection and classification of anomalies in X-rays and MRIs",
+      "Federated Learning: Train diagnostic models on decentralized data while preserving patient privacy",
+      "Survival Analysis: Predict disease progression and patient outcomes with high accuracy",
+      "RNN for Healthcare Time-Series: Monitor and predict patient vitals and treatment responses"
+    ]
+  },
+  {
+    title: "Finance Fortress",
+    description: "A financial services platform that addresses fraud detection and risk assessment challenges through cutting-edge AI solutions with a focus on explainability.",
+    icon: <DollarSign className="w-10 h-10 text-primary" />,
+    url: "https://finance-fortress.lovable.app/",
+    tags: ["Finance", "Fraud Detection", "Risk Assessment"],
+    features: [
+      "Anomaly Detection: Identify unusual patterns and potential fraud with Isolation Forest and Autoencoders",
+      "Ensemble Model Risk Scoring: Combine multiple models for accurate risk assessment",
+      "Sentiment Analysis: Analyze financial news and reports to inform risk models",
+      "Model Interpretability: Use SHAP values and LIME for transparent, explainable AI decisions"
+    ]
+  },
+  {
+    title: "AI Manufacture Magic",
+    description: "A manufacturing intelligence platform that solves predictive maintenance and quality control challenges through innovative AI/ML implementations.",
+    icon: <Factory className="w-10 h-10 text-primary" />,
+    url: "https://ai-manufacture-magic.lovable.app/",
+    tags: ["Manufacturing", "Maintenance", "Quality Control"],
+    features: [
+      "Sensor Data Analysis: Use Random Forests on IoT data to predict equipment failures before they occur",
+      "Computer Vision Quality Control: Deploy CNNs and YOLO for real-time defect identification",
+      "GAN Data Augmentation: Generate synthetic training data for rare defect scenarios",
+      "Maintenance Cost Optimization: Balance maintenance expenses with potential downtime costs"
     ]
   },
   {
