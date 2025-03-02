@@ -1,13 +1,65 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 import ChatDialog from '@/components/ChatDialog';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id.replace('first-name', 'firstName').replace('last-name', 'lastName')]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.email || !formData.message) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          email: formData.email,
+          message: formData.message
+        });
+
+      if (error) throw error;
+      
+      toast.success('Your message has been sent successfully!');
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Failed to send message. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-16">
@@ -27,29 +79,60 @@ const Contact = () => {
                 Fill out the form below and we'll get back to you within 24 hours.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="first-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First name</label>
-                  <Input id="first-name" placeholder="John" />
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="first-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First name</label>
+                    <Input 
+                      id="first-name" 
+                      placeholder="John" 
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="last-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last name</label>
+                    <Input 
+                      id="last-name" 
+                      placeholder="Doe" 
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="last-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last name</label>
-                  <Input id="last-name" placeholder="Doe" />
+                  <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+                  <Input 
+                    id="email" 
+                    placeholder="johndoe@example.com" 
+                    type="email" 
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
-                <Input id="email" placeholder="johndoe@example.com" type="email" />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
-                <Textarea id="message" placeholder="Tell us about your project or question..." />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full">Send Message</Button>
-            </CardFooter>
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
+                  <Textarea 
+                    id="message" 
+                    placeholder="Tell us about your project or question..." 
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  className="w-full" 
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </Button>
+              </CardFooter>
+            </form>
           </Card>
           <div className="mt-8">
             <Card>
