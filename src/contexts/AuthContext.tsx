@@ -53,15 +53,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Check if user has admin role
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .single();
-
-    setIsAdmin(!!data && !error);
+    // For now, hardcode admin check to avoid table errors
+    // We'll need to create a user_roles table later
+    // This is temporary until we set up proper user roles
+    const adminEmails = ['admin@example.com']; // Add your admin emails here
+    const { data: userData } = await supabase.auth.getUser();
+    setIsAdmin(adminEmails.includes(userData.user?.email || ''));
   }
 
   const signIn = async (email: string, password: string) => {

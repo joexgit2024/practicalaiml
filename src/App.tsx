@@ -1,3 +1,5 @@
+
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,7 +18,7 @@ import { Toaster } from './components/ui/toaster';
 import { useAuth } from './contexts/AuthContext';
 
 function App() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMenuOpen(!isMenuOpen);
