@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,14 +16,12 @@ const Admin = () => {
   const [loadingDocs, setLoadingDocs] = useState(true);
 
   useEffect(() => {
-    // If auth is loaded and user is not admin, redirect to home
     if (!isLoading && (!user || !isAdmin)) {
       navigate('/');
     }
   }, [user, isAdmin, isLoading, navigate]);
 
   useEffect(() => {
-    // Fetch existing documents
     if (user) {
       fetchDocuments();
     }
@@ -69,14 +66,12 @@ const Admin = () => {
 
     try {
       console.log("Starting document upload...");
-      console.log("File type:", file.type); // Log the file's content type
       
       // Use the Supabase Edge Function
       const { data: functionData, error: functionError } = await supabase.functions.invoke(
         'upload-document',
         {
           body: formData,
-          // Let the browser set content-type automatically for FormData
         }
       );
 
@@ -130,18 +125,14 @@ const Admin = () => {
     }
   };
 
-  // If still loading auth, show loading
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
-
-  // If not admin or not logged in, component will redirect in useEffect
 
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-8">Admin Document Management</h1>
 
-      {/* Upload Form */}
       <div className="bg-card p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">Upload New Document</h2>
         <form onSubmit={uploadDocument} className="space-y-4">
@@ -166,7 +157,6 @@ const Admin = () => {
         </form>
       </div>
 
-      {/* Document List */}
       <div className="bg-card p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Uploaded Documents</h2>
         
@@ -195,7 +185,6 @@ const Admin = () => {
                     size="sm"
                     onClick={async () => {
                       try {
-                        // First delete the file from storage if it exists
                         if (doc.file_path) {
                           const { error: storageError } = await supabase
                             .storage
@@ -207,7 +196,6 @@ const Admin = () => {
                           }
                         }
                         
-                        // Then delete the document record
                         const { error } = await supabase
                           .from('documents')
                           .delete()
@@ -215,7 +203,6 @@ const Admin = () => {
                           
                         if (error) throw error;
                         
-                        // Refresh the list
                         fetchDocuments();
                         
                         toast({
