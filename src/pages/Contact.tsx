@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import ChatDialog from '@/components/ChatDialog';
 import DocumentUploader from '@/components/DocumentUploader';
 
 const Contact = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-16">
       <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
@@ -113,8 +115,18 @@ const Contact = () => {
                 Get immediate assistance from our AI-powered support system. For complex issues, our team will follow up via email.
               </CardDescription>
             </CardHeader>
-            <CardContent className="h-[550px] flex">
-              <ChatDialog />
+            <CardContent className="h-[550px] flex flex-col items-center justify-center">
+              <Button 
+                size="lg" 
+                onClick={() => setIsChatOpen(true)}
+                className="w-full md:w-auto"
+              >
+                Start Chat Support
+              </Button>
+              <ChatDialog 
+                open={isChatOpen} 
+                onOpenChange={setIsChatOpen} 
+              />
             </CardContent>
           </Card>
         </div>
