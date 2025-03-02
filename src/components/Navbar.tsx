@@ -115,7 +115,7 @@ const Navbar = () => {
                   closeMobileMenu();
                 }}
               >
-                <User className="h-4 w-4 mr-2" /> Login
+                <User className="h-4 w-4 mr-2" /> Employee Login
               </Button>
             )}
           </div>
