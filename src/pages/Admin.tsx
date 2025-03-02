@@ -53,7 +53,9 @@ const Admin = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      console.log(`Selected file: ${selectedFile.name}, type: ${selectedFile.type}, size: ${selectedFile.size}`);
+      setFile(selectedFile);
     }
   };
 
@@ -74,9 +76,8 @@ const Admin = () => {
         'upload-document',
         {
           body: formData,
-          headers: {
-            // Content type is automatically set by the browser when using FormData
-          }
+          // Important: Do not set content-type header here, let the browser set it automatically
+          // for FormData which includes the necessary multipart/form-data boundary
         }
       );
 

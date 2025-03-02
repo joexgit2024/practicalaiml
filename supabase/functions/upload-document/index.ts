@@ -2,9 +2,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 console.log("Upload document function started");
 
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
     console.log("Received upload request");
     
@@ -17,7 +27,7 @@ serve(async (req) => {
       console.error("No file found in form data or incorrect file format");
       return new Response(
         JSON.stringify({ error: "No file found in form data" }),
-        { headers: { "Content-Type": "application/json" }, status: 400 }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
       );
     }
 
@@ -60,7 +70,7 @@ serve(async (req) => {
       console.error("Error checking/creating bucket:", error);
       return new Response(
         JSON.stringify({ error: "Error setting up storage bucket" }),
-        { headers: { "Content-Type": "application/json" }, status: 500 }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
       );
     }
 
@@ -69,8 +79,21 @@ serve(async (req) => {
     if (!['pdf', 'docx', 'txt'].includes(fileExt)) {
       return new Response(
         JSON.stringify({ error: "Only PDF, DOCX, and TXT files are supported" }),
-        { headers: { "Content-Type": "application/json" }, status: 400 }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
       );
+    }
+
+    // Determine content type based on extension if not provided
+    let contentType = file.type;
+    if (!contentType || contentType === '') {
+      // Set default content types based on extension
+      const contentTypeMap: Record<string, string> = {
+        'pdf': 'application/pdf',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'txt': 'text/plain'
+      };
+      contentType = contentTypeMap[fileExt] || 'application/octet-stream';
+      console.log(`File type was empty, using derived content type: ${contentType}`);
     }
 
     // Create a unique filename
@@ -78,11 +101,11 @@ serve(async (req) => {
     const filePath = `${uniqueFilename}`;
 
     // Upload the file to Supabase Storage
-    console.log(`Uploading file to path: ${filePath}`);
+    console.log(`Uploading file to path: ${filePath} with content type: ${contentType}`);
     const { data: uploadData, error: uploadError } = await supabaseClient.storage
       .from("documents")
       .upload(filePath, file, {
-        contentType: file.type,
+        contentType: contentType,
         cacheControl: "3600",
       });
 
@@ -90,7 +113,7 @@ serve(async (req) => {
       console.error("Error uploading file:", uploadError);
       return new Response(
         JSON.stringify({ error: `Error uploading file: ${uploadError.message}` }),
-        { headers: { "Content-Type": "application/json" }, status: 500 }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
       );
     }
 
@@ -112,7 +135,7 @@ serve(async (req) => {
         file_size: file.size,
         title: file.name,
         status: "uploaded",
-        content_type: file.type || `application/${fileExt}`, // Save the content type
+        content_type: contentType,
       })
       .select()
       .single();
@@ -121,7 +144,7 @@ serve(async (req) => {
       console.error("Error creating document record:", documentError);
       return new Response(
         JSON.stringify({ error: `Error creating document record: ${documentError.message}` }),
-        { headers: { "Content-Type": "application/json" }, status: 500 }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
       );
     }
 
@@ -130,13 +153,13 @@ serve(async (req) => {
     // Return the document ID to the client
     return new Response(
       JSON.stringify({ documentId: documentData.id }),
-      { headers: { "Content-Type": "application/json" }, status: 200 }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {
     console.error("Unexpected error:", error);
     return new Response(
       JSON.stringify({ error: `Unexpected error: ${error.message}` }),
-      { headers: { "Content-Type": "application/json" }, status: 500 }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
 });
