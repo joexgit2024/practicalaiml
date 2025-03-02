@@ -71,13 +71,12 @@ const Admin = () => {
       console.log("Starting document upload...");
       console.log("File type:", file.type); // Log the file's content type
       
-      // Use the Supabase Edge Function directly
+      // Use the Supabase Edge Function
       const { data: functionData, error: functionError } = await supabase.functions.invoke(
         'upload-document',
         {
           body: formData,
-          // Do not set content-type header, let the browser set it automatically
-          // for FormData which includes the necessary multipart/form-data boundary
+          // Let the browser set content-type automatically for FormData
         }
       );
 
@@ -196,6 +195,19 @@ const Admin = () => {
                     size="sm"
                     onClick={async () => {
                       try {
+                        // First delete the file from storage if it exists
+                        if (doc.file_path) {
+                          const { error: storageError } = await supabase
+                            .storage
+                            .from('documents')
+                            .remove([doc.file_path]);
+                            
+                          if (storageError) {
+                            console.error("Error deleting file from storage:", storageError);
+                          }
+                        }
+                        
+                        // Then delete the document record
                         const { error } = await supabase
                           .from('documents')
                           .delete()

@@ -1,135 +1,137 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.43.1'
+import { corsHeaders } from '../_shared/cors.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-console.log("Upload document function started");
+console.log('Upload document function started')
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    console.log("Received upload request");
-    
-    // Get the form data from the request
-    const formData = await req.formData();
-    const file = formData.get("file");
-    
-    // Check if the file exists and is a File object
+    // Get form data from the request
+    let formData
+    try {
+      formData = await req.formData()
+    } catch (error) {
+      console.error('Error parsing form data:', error)
+      return new Response(
+        JSON.stringify({ error: 'Failed to parse form data' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const file = formData.get('file')
     if (!file || !(file instanceof File)) {
-      console.error("No file found in form data or incorrect file format");
+      console.error('No file found in request')
       return new Response(
-        JSON.stringify({ error: "No file found in form data" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-      );
+        JSON.stringify({ error: 'No file found in request' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    console.log(`Processing file: ${file.name}, size: ${file.size}, type: ${file.type}`);
+    console.log(`File details: name=${file.name}, size=${file.size}, type=${file.type}`)
 
-    // Create a Supabase client with the auth context from the request
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        global: {
-          headers: { Authorization: req.headers.get("Authorization")! },
-        },
-      }
-    );
+    // Get file content
+    const fileContent = await file.arrayBuffer()
+    const fileBuffer = new Uint8Array(fileContent)
 
-    // Get file extension
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
-    if (!['pdf', 'docx', 'txt'].includes(fileExt)) {
-      return new Response(
-        JSON.stringify({ error: "Only PDF, DOCX, and TXT files are supported" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-      );
+    // Determine content type based on file extension if not available
+    let contentType = file.type
+    if (!contentType || contentType === 'application/octet-stream') {
+      const extension = file.name.split('.').pop()?.toLowerCase()
+      if (extension === 'pdf') contentType = 'application/pdf'
+      else if (extension === 'docx') contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      else if (extension === 'txt') contentType = 'text/plain'
+      else contentType = 'application/octet-stream'
     }
+    
+    console.log(`Using content type: ${contentType}`)
 
-    // Determine content type based on extension if not provided
-    let contentType = file.type;
-    if (!contentType || contentType === '') {
-      // Set default content types based on extension
-      const contentTypeMap: Record<string, string> = {
-        'pdf': 'application/pdf',
-        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'txt': 'text/plain'
-      };
-      contentType = contentTypeMap[fileExt] || 'application/octet-stream';
-      console.log(`File type was empty, using derived content type: ${contentType}`);
-    }
-
-    // Create a unique filename
-    const uniqueFilename = `${Date.now()}_${file.name}`;
-    const filePath = `${uniqueFilename}`;
-
-    // Upload the file to Supabase Storage
-    console.log(`Uploading file to path: ${filePath} with content type: ${contentType}`);
-    const { data: uploadData, error: uploadError } = await supabaseClient.storage
-      .from("documents")
-      .upload(filePath, file, {
-        contentType: contentType,
-        cacheControl: "3600",
-      });
-
-    if (uploadError) {
-      console.error("Error uploading file:", uploadError);
-      return new Response(
-        JSON.stringify({ error: `Error uploading file: ${uploadError.message}` }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
-      );
-    }
-
-    // Get the public URL for the file
-    const { data: urlData } = await supabaseClient.storage
-      .from("documents")
-      .getPublicUrl(filePath);
-
-    const publicUrl = urlData.publicUrl;
-    console.log(`File uploaded successfully. Public URL: ${publicUrl}`);
-
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    
     // Create a record in the documents table
-    const { data: documentData, error: documentError } = await supabaseClient
-      .from("documents")
+    const { data: document, error: insertError } = await supabase
+      .from('documents')
       .insert({
-        file_path: filePath,
         file_name: file.name,
-        file_type: fileExt,
         file_size: file.size,
-        title: file.name,
-        status: "uploaded",
+        file_type: contentType,
         content_type: contentType,
+        title: file.name,
+        status: 'uploaded'
       })
       .select()
-      .single();
+      .single()
 
-    if (documentError) {
-      console.error("Error creating document record:", documentError);
+    if (insertError) {
+      console.error('Error inserting document record:', insertError)
       return new Response(
-        JSON.stringify({ error: `Error creating document record: ${documentError.message}` }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
-      );
+        JSON.stringify({ error: `Failed to create document record: ${insertError.message}` }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    console.log(`Document record created with ID: ${documentData.id}`);
+    // Upload file to storage
+    const filePath = `${document.id}/${file.name}`
+    console.log(`Uploading file to path: ${filePath}`)
+    
+    const { data: storageData, error: storageError } = await supabase
+      .storage
+      .from('documents')
+      .upload(filePath, fileBuffer, {
+        contentType,
+        upsert: false
+      })
 
-    // Return the document ID to the client
+    if (storageError) {
+      console.error('Error uploading file to storage:', storageError)
+      
+      // Clean up the document record if storage upload fails
+      await supabase.from('documents').delete().eq('id', document.id)
+      
+      return new Response(
+        JSON.stringify({ error: `Failed to upload file: ${storageError.message}` }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Update the document record with the file path
+    const { error: updateError } = await supabase
+      .from('documents')
+      .update({ file_path: filePath })
+      .eq('id', document.id)
+
+    if (updateError) {
+      console.error('Error updating document record with file path:', updateError)
+      return new Response(
+        JSON.stringify({ error: `Failed to update document with file path: ${updateError.message}` }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Return success response with document ID
     return new Response(
-      JSON.stringify({ documentId: documentData.id }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-    );
+      JSON.stringify({ 
+        documentId: document.id,
+        message: 'Document uploaded successfully' 
+      }),
+      { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
   } catch (error) {
-    console.error("Unexpected error:", error);
+    console.error('Unexpected error in upload-document function:', error)
     return new Response(
-      JSON.stringify({ error: `Unexpected error: ${error.message}` }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
-    );
+      JSON.stringify({ error: `An unexpected error occurred: ${error.message}` }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
-});
+})
