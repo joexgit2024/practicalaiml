@@ -1159,6 +1159,51 @@ export type Database = {
         }
         Relationships: []
       }
+      loading_sequences: {
+        Row: {
+          created_at: string | null
+          efficiency: string
+          equipment_type: string
+          handling_notes: string
+          id: number
+          items: string
+          name: string
+          special_instructions: string | null
+          temperature: string
+          total_weight: string
+          updated_at: string | null
+          vehicle_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          efficiency: string
+          equipment_type: string
+          handling_notes: string
+          id?: number
+          items: string
+          name: string
+          special_instructions?: string | null
+          temperature: string
+          total_weight: string
+          updated_at?: string | null
+          vehicle_type: string
+        }
+        Update: {
+          created_at?: string | null
+          efficiency?: string
+          equipment_type?: string
+          handling_notes?: string
+          id?: number
+          items?: string
+          name?: string
+          special_instructions?: string | null
+          temperature?: string
+          total_weight?: string
+          updated_at?: string | null
+          vehicle_type?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -1407,6 +1452,7 @@ export type Database = {
           estimated_impact: number | null
           id: string
           name: string
+          related_risks: string[] | null
           status: string | null
           updated_at: string | null
           user_id: string
@@ -1418,6 +1464,7 @@ export type Database = {
           estimated_impact?: number | null
           id?: string
           name: string
+          related_risks?: string[] | null
           status?: string | null
           updated_at?: string | null
           user_id: string
@@ -1429,6 +1476,7 @@ export type Database = {
           estimated_impact?: number | null
           id?: string
           name?: string
+          related_risks?: string[] | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
@@ -1530,6 +1578,45 @@ export type Database = {
           total_episodes?: number | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      routes: {
+        Row: {
+          created_at: string | null
+          duration: string
+          end_location: string
+          id: number
+          name: string
+          product_type: string
+          product_weight: string
+          start_location: string
+          time_preference: string
+          traffic: string
+        }
+        Insert: {
+          created_at?: string | null
+          duration: string
+          end_location: string
+          id?: number
+          name: string
+          product_type: string
+          product_weight: string
+          start_location: string
+          time_preference: string
+          traffic: string
+        }
+        Update: {
+          created_at?: string | null
+          duration?: string
+          end_location?: string
+          id?: number
+          name?: string
+          product_type?: string
+          product_weight?: string
+          start_location?: string
+          time_preference?: string
+          traffic?: string
         }
         Relationships: []
       }
@@ -1680,6 +1767,50 @@ export type Database = {
           },
         ]
       }
+      scenario_simulations: {
+        Row: {
+          cost_effectiveness: number
+          created_at: string | null
+          id: string
+          implementation_time: number
+          probability_reduction: number
+          roi: number
+          scenario_id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cost_effectiveness: number
+          created_at?: string | null
+          id?: string
+          implementation_time: number
+          probability_reduction: number
+          roi: number
+          scenario_id: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cost_effectiveness?: number
+          created_at?: string | null
+          id?: string
+          implementation_time?: number
+          probability_reduction?: number
+          roi?: number
+          scenario_id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scenario_simulations_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "risk_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scenarios: {
         Row: {
           created_at: string | null
@@ -1713,6 +1844,48 @@ export type Database = {
           parameters?: Json
           results?: Json | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      shipment_routes: {
+        Row: {
+          congestion_factor: number | null
+          created_at: string | null
+          destination: string
+          distance: string | null
+          estimated_delay_risk: number | null
+          id: string
+          origin: string
+          shipment_type: string
+          transit_time: string
+          user_id: string | null
+          weather_factor: number | null
+        }
+        Insert: {
+          congestion_factor?: number | null
+          created_at?: string | null
+          destination: string
+          distance?: string | null
+          estimated_delay_risk?: number | null
+          id?: string
+          origin: string
+          shipment_type: string
+          transit_time: string
+          user_id?: string | null
+          weather_factor?: number | null
+        }
+        Update: {
+          congestion_factor?: number | null
+          created_at?: string | null
+          destination?: string
+          distance?: string | null
+          estimated_delay_risk?: number | null
+          id?: string
+          origin?: string
+          shipment_type?: string
+          transit_time?: string
+          user_id?: string | null
+          weather_factor?: number | null
         }
         Relationships: []
       }
@@ -1917,6 +2090,108 @@ export type Database = {
           weather_risk_score?: number | null
         }
         Relationships: []
+      }
+      supply_chain_nodes: {
+        Row: {
+          address: string | null
+          capacity: number | null
+          country: string | null
+          created_at: string | null
+          id: string
+          inventory_level: number | null
+          latitude: number
+          longitude: number
+          metadata: Json | null
+          name: string
+          node_type: string
+          status: string | null
+        }
+        Insert: {
+          address?: string | null
+          capacity?: number | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          inventory_level?: number | null
+          latitude: number
+          longitude: number
+          metadata?: Json | null
+          name: string
+          node_type: string
+          status?: string | null
+        }
+        Update: {
+          address?: string | null
+          capacity?: number | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          inventory_level?: number | null
+          latitude?: number
+          longitude?: number
+          metadata?: Json | null
+          name?: string
+          node_type?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
+      supply_chain_routes: {
+        Row: {
+          cost: number | null
+          created_at: string | null
+          destination_node_id: string
+          distance: number
+          id: string
+          metadata: Json | null
+          risk_level: number | null
+          source_node_id: string
+          status: string | null
+          transit_time: number
+          transportation_mode: string
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string | null
+          destination_node_id: string
+          distance: number
+          id?: string
+          metadata?: Json | null
+          risk_level?: number | null
+          source_node_id: string
+          status?: string | null
+          transit_time: number
+          transportation_mode: string
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string | null
+          destination_node_id?: string
+          distance?: number
+          id?: string
+          metadata?: Json | null
+          risk_level?: number | null
+          source_node_id?: string
+          status?: string | null
+          transit_time?: number
+          transportation_mode?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_chain_routes_destination_node_id_fkey"
+            columns: ["destination_node_id"]
+            isOneToOne: false
+            referencedRelation: "supply_chain_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supply_chain_routes_source_node_id_fkey"
+            columns: ["source_node_id"]
+            isOneToOne: false
+            referencedRelation: "supply_chain_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       supply_chain_scenarios: {
         Row: {
@@ -2181,6 +2456,25 @@ export type Database = {
           product_name: string | null
           shipping_mode: Database["public"]["Enums"]["shipping_mode"] | null
           tracking_number: string | null
+        }
+        Relationships: []
+      }
+      supply_chain_route_analysis: {
+        Row: {
+          avg_speed: number | null
+          cost: number | null
+          cost_per_mile: number | null
+          destination_country: string | null
+          destination_name: string | null
+          destination_type: string | null
+          distance: number | null
+          id: string | null
+          risk_level: number | null
+          source_country: string | null
+          source_name: string | null
+          source_type: string | null
+          transit_time: number | null
+          transportation_mode: string | null
         }
         Relationships: []
       }
