@@ -66,27 +66,29 @@ const Admin = () => {
     formData.append('file', file);
 
     try {
-      // Upload document via edge function
-      const response = await fetch(`${window.location.origin}/api/upload-document`, {
-        method: 'POST',
-        body: formData,
-      });
+      // Use the Supabase Edge Function directly
+      const { data: functionData, error: functionError } = await supabase.functions.invoke(
+        'upload-document',
+        {
+          body: formData,
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to upload document');
+      if (functionError) {
+        throw new Error(functionError.message || 'Failed to upload document');
       }
-
-      const result = await response.json();
       
       // Trigger document processing
-      await fetch(`${window.location.origin}/api/process-document`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ documentId: result.documentId }),
-      });
+      const { error: processError } = await supabase.functions.invoke(
+        'process-document',
+        {
+          body: { documentId: functionData.documentId },
+        }
+      );
+
+      if (processError) {
+        throw new Error(processError.message || 'Failed to process document');
+      }
 
       toast({
         title: "Success!",

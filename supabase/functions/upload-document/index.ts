@@ -41,6 +41,26 @@ serve(async (req) => {
     // Generate a unique file path
     const filePath = `documents/${crypto.randomUUID()}.${fileExt}`
 
+    // Check if the documents bucket exists and create if not
+    const { data: bucketData, error: bucketError } = await supabase.storage
+      .getBucket('documents')
+    
+    if (bucketError && bucketError.message.includes('not found')) {
+      // Create the documents bucket
+      const { error: createBucketError } = await supabase.storage
+        .createBucket('documents', {
+          public: false,
+        })
+      
+      if (createBucketError) {
+        console.error('Failed to create bucket:', createBucketError)
+        return new Response(
+          JSON.stringify({ error: 'Failed to create storage bucket', details: createBucketError }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        )
+      }
+    }
+
     // Upload file to storage
     const { data: storageData, error: storageError } = await supabase.storage
       .from('documents')
