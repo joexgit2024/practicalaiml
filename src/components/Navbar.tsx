@@ -25,7 +25,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <img src="/logo.png" alt="Logo" className="h-8 w-auto mr-2" />
-              <span className="font-semibold text-xl">YourCompany</span>
+              <span className="font-semibold text-xl">Practical AIML</span>
             </Link>
           </div>
 

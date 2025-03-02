@@ -151,17 +151,17 @@ const Contact = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-medium">Address</h3>
-                  <p className="text-muted-foreground">123 Business Avenue, Suite 200<br />New York, NY 10001</p>
+                  <p className="text-muted-foreground">To be updated soon<br />Tallawong 2762 NSW</p>
                 </div>
                 
                 <div>
                   <h3 className="font-medium">Email</h3>
-                  <p className="text-muted-foreground">contact@yourcompany.com</p>
+                  <p className="text-muted-foreground">support@practicalaiml.com.au</p>
                 </div>
                 
                 <div>
                   <h3 className="font-medium">Phone</h3>
-                  <p className="text-muted-foreground">(123) 456-7890</p>
+                  <p className="text-muted-foreground">0437 443 634</p>
                 </div>
                 
                 <div>
@@ -187,7 +187,7 @@ const Contact = () => {
         <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Visit Our Office</h2>
           <div className="h-80 bg-gray-200 rounded-lg flex items-center justify-center">
-            <p className="text-muted-foreground">Google Map would be embedded here</p>
+            <p className="text-muted-foreground">Google Map would be embedded here soon</p>
           </div>
         </div>
       </div>
