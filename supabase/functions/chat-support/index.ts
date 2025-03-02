@@ -59,8 +59,66 @@ async function generateResponse(question: string, context: string[]) {
         messages: [
           {
             role: 'system',
-            content: `You are a helpful assistant for the company website. Answer the question based on the context provided. 
-                     If you don't know the answer based on the context, say so politely without making up information.`
+            content: `You are a helpful assistant for the company website. Answer the question based on the context provided. if the context is blank, then use below context:
+                      Comprehensive AI Solutions for Business Needs
+                      Providing enterprise and small business solutions, including AI & ML services, full-stack web development with enterprise security, and data services.
+
+                      AI & ML Services
+                      Strategy & Consulting: AI readiness assessment, custom AI roadmap, industry use case identification.
+                      ML Model Development: Custom ML models, predictive analytics, NLP (chatbots, sentiment analysis), computer vision.
+                      AI Integration: AI/ML in CRM/ERP, API development, cloud-based AI (AWS, Azure, GCP).
+                      Automation: AI-powered process automation, RPA.
+                      Training & Support: AI tool training, model maintenance & optimization.
+                      Full-Stack Web Development with Enterprise Security
+                      Custom Web Development: Responsive websites, AI-powered e-commerce, CMS integration.
+                      Enterprise Security: SSL/TLS encryption, MFA, security audits, GDPR/HIPAA compliance.
+                      Hosting & Domain: Secure hosting (AWS, Azure, GCP), DNS management.
+                      Best Practices: SEO, performance optimization, mobile-first design.
+                      Data Services
+                      Engineering: Data pipelines, ETL solutions.
+                      Analytics & Visualization: BI dashboards (Power BI, Tableau), AI-driven insights.
+                      Security & Governance: Data encryption, governance frameworks.
+                      Industry-Specific AI Solutions
+                      Retail & E-commerce: Personalized recommendations, inventory forecasting.
+                      Healthcare: AI diagnostics, predictive patient analytics.
+                      Finance: Fraud detection, AI-based risk assessment.
+                      Manufacturing: Predictive maintenance, AI-powered quality control.
+                      Supply Chain: NLP-based data queries, AI-driven scenario planning, demand forecasting, route optimization.
+                      Emerging AI Technologies
+                      Generative AI: Custom ChatGPT-like models, AI-generated content.
+                      AI for IoT: Smart device management, predictive maintenance.
+                      Blockchain & AI: Secure AI model training, decentralized AI solutions.
+                      Additional Services
+                      Project Management: Agile/Scrum-based AI & web development.
+                      Post-Launch Support: Maintenance, feature updates.
+                      Training & Workshops: AI, ML, and web development training.
+                      Why Choose Us?
+                      Tailored AI Solutions: Customized for your business needs.
+                      End-to-End Expertise: Strategy to implementation & support.
+                      Industry Experience: Proven success in retail, healthcare, finance, and more.
+                      Future-Ready Tech: Generative AI, NLP, computer vision, IoT.
+                      Enterprise-Grade Security: Compliance & best practices.
+                      Seamless Integration: Works with existing systems, maximizing ROI.
+                      Cost-Effective & Scalable: Solutions that grow with your business.
+                      Dedicated Partnership: Continuous support & collaboration.
+                      Our Full-Stack Development Process
+                      Requirement Gathering: Define scope, goals, and tech stack.
+                      Prototype Development: Functional prototype with agile updates.
+                      Customer Review & Sign-Off: Feedback-based refinements.
+                      Code Ownership Transfer: Private GitHub repo & documentation.
+                      Production Development: Scaling to full enterprise-grade app.
+                      Post-Launch Support: Maintenance, security updates, new features.
+                      Benefits of the Prototype-First Approach:
+                      ✅ Transparency & collaboration
+                      ✅ Reduced risk with early feedback
+                      ✅ Full ownership of codebase
+                      ✅ Faster time-to-market
+
+                      Ready to Transform Your Business with AI?
+                      Let’s build the future together. Schedule a free consultation today!
+
+
+                     If you don't know the answer based on the context, say so politely without making up information. and redirect customer to support@practicalaiml.com.au`
           },
           {
             role: 'user',
@@ -68,6 +126,64 @@ async function generateResponse(question: string, context: string[]) {
                      ---------------------
                      ${combinedContext}
                      ---------------------
+                      if context is blank or empty, use get answers from below
+                      Comprehensive AI Solutions for Business Needs
+                        Providing enterprise and small business solutions, including AI & ML services, full-stack web development with enterprise security, and data services.
+
+                        AI & ML Services
+                        Strategy & Consulting: AI readiness assessment, custom AI roadmap, industry use case identification.
+                        ML Model Development: Custom ML models, predictive analytics, NLP (chatbots, sentiment analysis), computer vision.
+                        AI Integration: AI/ML in CRM/ERP, API development, cloud-based AI (AWS, Azure, GCP).
+                        Automation: AI-powered process automation, RPA.
+                        Training & Support: AI tool training, model maintenance & optimization.
+                        Full-Stack Web Development with Enterprise Security
+                        Custom Web Development: Responsive websites, AI-powered e-commerce, CMS integration.
+                        Enterprise Security: SSL/TLS encryption, MFA, security audits, GDPR/HIPAA compliance.
+                        Hosting & Domain: Secure hosting (AWS, Azure, GCP), DNS management.
+                        Best Practices: SEO, performance optimization, mobile-first design.
+                        Data Services
+                        Engineering: Data pipelines, ETL solutions.
+                        Analytics & Visualization: BI dashboards (Power BI, Tableau), AI-driven insights.
+                        Security & Governance: Data encryption, governance frameworks.
+                        Industry-Specific AI Solutions
+                        Retail & E-commerce: Personalized recommendations, inventory forecasting.
+                        Healthcare: AI diagnostics, predictive patient analytics.
+                        Finance: Fraud detection, AI-based risk assessment.
+                        Manufacturing: Predictive maintenance, AI-powered quality control.
+                        Supply Chain: NLP-based data queries, AI-driven scenario planning, demand forecasting, route optimization.
+                        Emerging AI Technologies
+                        Generative AI: Custom ChatGPT-like models, AI-generated content.
+                        AI for IoT: Smart device management, predictive maintenance.
+                        Blockchain & AI: Secure AI model training, decentralized AI solutions.
+                        Additional Services
+                        Project Management: Agile/Scrum-based AI & web development.
+                        Post-Launch Support: Maintenance, feature updates.
+                        Training & Workshops: AI, ML, and web development training.
+                        Why Choose Us?
+                        Tailored AI Solutions: Customized for your business needs.
+                        End-to-End Expertise: Strategy to implementation & support.
+                        Industry Experience: Proven success in retail, healthcare, finance, and more.
+                        Future-Ready Tech: Generative AI, NLP, computer vision, IoT.
+                        Enterprise-Grade Security: Compliance & best practices.
+                        Seamless Integration: Works with existing systems, maximizing ROI.
+                        Cost-Effective & Scalable: Solutions that grow with your business.
+                        Dedicated Partnership: Continuous support & collaboration.
+                        Our Full-Stack Development Process
+                        Requirement Gathering: Define scope, goals, and tech stack.
+                        Prototype Development: Functional prototype with agile updates.
+                        Customer Review & Sign-Off: Feedback-based refinements.
+                        Code Ownership Transfer: Private GitHub repo & documentation.
+                        Production Development: Scaling to full enterprise-grade app.
+                        Post-Launch Support: Maintenance, security updates, new features.
+                        Benefits of the Prototype-First Approach:
+                        ✅ Transparency & collaboration
+                        ✅ Reduced risk with early feedback
+                        ✅ Full ownership of codebase
+                        ✅ Faster time-to-market
+
+                        Ready to Transform Your Business with AI?
+                        Let’s build the future together. Schedule a free consultation today!
+
                      Given the context information and not prior knowledge, answer the question: ${question}`
           }
         ],
