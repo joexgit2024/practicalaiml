@@ -1,269 +1,125 @@
-import { Mail, MessageSquare, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import ChatDialog from "@/components/ChatDialog";
+
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import ChatDialog from '@/components/ChatDialog';
+import DocumentUploader from '@/components/DocumentUploader';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    phone: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert([
-          {
-            email: formData.email,
-            message: formData.message,
-          }
-        ]);
-
-      if (error) throw error;
-
-      toast.success("Thank you for your message! We'll get back to you soon.");
-      setFormData({ email: "", phone: "", message: "" });
-    } catch (error) {
-      toast.error("Failed to submit the form. Please try again.");
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
-    <main className="pt-20">
-      {/* Contact Methods Section */}
-      <section className="section-padding">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Contact Us</h2>
-            <p className="text-lg text-muted-foreground mb-12">
-              Get in touch with our team of AI experts
-            </p>
+    <div className="container mx-auto px-4 py-8 md:py-16">
+      <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight">Get in Touch</h1>
+        <p className="text-muted-foreground text-lg max-w-[700px]">
+          Have questions or ready to start your AI journey? Reach out to our team and we'll get back to you promptly.
+        </p>
+      </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div>
+          <Tabs defaultValue="contact" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="contact">Contact Form</TabsTrigger>
+              <TabsTrigger value="document">Knowledge Base</TabsTrigger>
+            </TabsList>
+            <TabsContent value="contact">
               <Card>
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center">
-                    <Phone className="w-12 h-12 text-primary mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Phone</h3>
-                    <p className="text-muted-foreground">0437 443 634</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center">
-                    <Mail className="w-12 h-12 text-primary mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Email</h3>
-                    <a 
-                      href="mailto:support@practicalaiml.com.au"
-                      className="text-primary hover:underline"
-                    >
-                      support@practicalaiml.com.au
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card 
-                className="cursor-pointer transition-transform hover:scale-105"
-                onClick={() => setIsChatOpen(true)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center">
-                    <MessageSquare className="w-12 h-12 text-primary mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Chat</h3>
-                    <p className="text-muted-foreground">Live chat support</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form Section */}
-      <section className="section-padding bg-muted">
-        <div className="container">
-          <div className="max-w-xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-center">Send us a Message</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  required
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                  Phone (optional)
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  required
-                  rows={4}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                ></textarea>
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Sending..." : "Send Message"}
-              </Button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="section-padding bg-muted">
-        <div className="container">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
-            <p className="text-lg text-muted-foreground mb-8 text-center">
-              Find answers to common questions about our services
-            </p>
-
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="full-stack">
-                <AccordionTrigger>What is your approach to full-stack development?</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4">
-                    <p className="font-semibold">
-                      Full-Stack Development with a Prototype-First Approach
-                    </p>
-                    <p>
-                      We believe in delivering value early and often. Our process begins with building a functional prototype to align with your vision and gather feedback. Once approved, we transfer code ownership to you via GitHub, ensuring full transparency and control. From there, we scale the prototype into a production-ready application, implementing enterprise-grade security and best practices.
-                    </p>
-
-                    <div className="mt-6">
-                      <h4 className="font-semibold mb-4">Our Full-Stack Development Process</h4>
-                      <div className="space-y-6">
-                        <div>
-                          <h5 className="font-semibold mb-2">1. Requirement Gathering and Planning</h5>
-                          <ul className="list-disc pl-5 space-y-1">
-                            <li>Collaborate with the customer to understand their goals, features, and technical requirements.</li>
-                            <li>Define the scope, timeline, and deliverables for the prototype.</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h5 className="font-semibold mb-2">2. Prototype Development</h5>
-                          <ul className="list-disc pl-5 space-y-1">
-                            <li>Develop a functional prototype that showcases the core features and user experience.</li>
-                            <li>Use agile methodologies to deliver incremental updates and gather feedback.</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h5 className="font-semibold mb-2">3. Customer Review and Sign-Off</h5>
-                          <ul className="list-disc pl-5 space-y-1">
-                            <li>Present the prototype to the customer for review and testing.</li>
-                            <li>Incorporate feedback and make necessary adjustments until the customer is satisfied.</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h5 className="font-semibold mb-2">4. Code Ownership Transfer</h5>
-                          <ul className="list-disc pl-5 space-y-1">
-                            <li>Once the prototype is approved, transfer code ownership to the customer via a private GitHub repository.</li>
-                            <li>Provide documentation and support to ensure a smooth handover.</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h5 className="font-semibold mb-2">5. Production Development</h5>
-                          <ul className="list-disc pl-5 space-y-1">
-                            <li>Work with the customer to scale the prototype into a full production-ready application.</li>
-                            <li>Implement enterprise-grade security, performance optimization, and best practices.</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h5 className="font-semibold mb-2">6. Post-Launch Support</h5>
-                          <ul className="list-disc pl-5 space-y-1">
-                            <li>Offer ongoing maintenance, updates, and technical support to ensure the application runs smoothly.</li>
-                          </ul>
-                        </div>
-                      </div>
+                <CardHeader>
+                  <CardTitle>Send us a message</CardTitle>
+                  <CardDescription>
+                    Fill out the form below and we'll get back to you within 24 hours.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="first-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First name</label>
+                      <Input id="first-name" placeholder="John" />
                     </div>
-
-                    <div className="mt-6">
-                      <h4 className="font-semibold mb-4">Key Benefits of This Approach</h4>
-                      <ul className="list-disc pl-5 space-y-2">
-                        <li><span className="font-semibold">Transparency and Collaboration:</span> Customers are involved throughout the process, ensuring the final product meets their expectations.</li>
-                        <li><span className="font-semibold">Reduced Risk:</span> Prototyping allows for early feedback and adjustments, minimizing costly changes during production.</li>
-                        <li><span className="font-semibold">Ownership and Control:</span> Customers gain full ownership of the codebase, giving them complete control over their product.</li>
-                        <li><span className="font-semibold">Faster Time-to-Market:</span> A prototype-first approach accelerates the development cycle and delivers value sooner.</li>
-                      </ul>
+                    <div className="space-y-2">
+                      <label htmlFor="last-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last name</label>
+                      <Input id="last-name" placeholder="Doe" />
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="pricing">
-                <AccordionTrigger>How does your pricing work?</AccordionTrigger>
-                <AccordionContent>
-                  We offer flexible pricing plans tailored to your specific needs. Contact us for a
-                  personalized quote.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="data-security">
-                <AccordionTrigger>How do you ensure data security?</AccordionTrigger>
-                <AccordionContent>
-                  We employ industry-leading security measures to protect your data.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+                    <Input id="email" placeholder="johndoe@example.com" type="email" />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
+                    <Textarea id="message" placeholder="Tell us about your project or question..." />
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full">Send Message</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            <TabsContent value="document">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upload Knowledge Base Document</CardTitle>
+                  <CardDescription>
+                    Add documents to our knowledge base to improve our AI support capabilities.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <DocumentUploader />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+          <div className="mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-1"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <div>
+                    <h3 className="font-medium">Phone</h3>
+                    <p className="text-muted-foreground">+1 (555) 000-0000</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-1"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                  <div>
+                    <h3 className="font-medium">Email</h3>
+                    <p className="text-muted-foreground">support@practicalaiml.com.au</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-1"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <div>
+                    <h3 className="font-medium">Office</h3>
+                    <p className="text-muted-foreground">123 AI Street, Tech Park</p>
+                    <p className="text-muted-foreground">Silicon Valley, CA 94000</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
-      </section>
 
-      {/* Chat Dialog */}
-      <ChatDialog open={isChatOpen} onOpenChange={setIsChatOpen} />
-    </main>
+        <div>
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Live Chat Support</CardTitle>
+              <CardDescription>
+                Get immediate assistance from our AI-powered support system. For complex issues, our team will follow up via email.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="h-[550px] flex">
+              <ChatDialog />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 
