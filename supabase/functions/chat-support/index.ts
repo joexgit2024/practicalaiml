@@ -1,158 +1,167 @@
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
-import { ChatCompletionMessage } from "https://cdn.skypack.dev/openai@4.28.0?dts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
-const baseSystemPrompt = `You are a customer support assistant for Practical AI & ML. 
-You help customers with questions about our services, including:
+async function generateEmbedding(text: string) {
+  const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+  if (!OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is not set');
+  }
 
-1. Full-stack development with our prototype-first approach
-2. AI consulting and implementation
-3. Data analysis and machine learning solutions
+  try {
+    const response = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        input: text,
+        model: 'text-embedding-ada-002'
+      })
+    });
 
-Key points about our services:
-- We focus on delivering value early through functional prototypes
-- We transfer code ownership to clients via GitHub
-- We implement enterprise-grade security and best practices
-- We offer continuous support and maintenance
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+    }
 
-Use the context information below to answer questions. If the information isn't in the context, 
-use your general knowledge but make it clear what's fact versus what might be your best guess.
+    const result = await response.json();
+    return result.data[0].embedding;
+  } catch (error) {
+    console.error('Error generating embedding:', error);
+    throw error;
+  }
+}
 
-If you cannot confidently answer a question based on this information, respond with: 
-"I apologize, but I'm not able to provide a complete answer to your question. Please email us at support@practicalaiml.com.au for detailed assistance."`;
+async function generateResponse(question: string, context: string[]) {
+  const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+  if (!OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is not set');
+  }
+
+  try {
+    const combinedContext = context.join('\n\n');
+    
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a helpful assistant for the company website. Answer the question based on the context provided. 
+                     If you don't know the answer based on the context, say so politely without making up information.`
+          },
+          {
+            role: 'user',
+            content: `Context information is below.
+                     ---------------------
+                     ${combinedContext}
+                     ---------------------
+                     Given the context information and not prior knowledge, answer the question: ${question}`
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 500
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+    }
+
+    const result = await response.json();
+    return result.choices[0].message.content;
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw error;
+  }
+}
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Initialize Supabase client
+    const { question } = await req.json();
+
+    if (!question) {
+      return new Response(
+        JSON.stringify({ error: 'Question is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { message, sessionId } = await req.json();
-    console.log(`Processing message for session ${sessionId}: ${message.substring(0, 50)}...`);
-    
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openAIApiKey) {
-      throw new Error('OPENAI_API_KEY is not set');
-    }
+    // Generate embedding for the question
+    const questionEmbedding = await generateEmbedding(question);
 
-    // Get conversation history
-    let messages: ChatCompletionMessage[] = [{ role: 'system', content: baseSystemPrompt }];
-    
-    const { data: historyData, error: historyError } = await supabase
-      .from('chat_conversations')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: true })
-      .limit(10); // Get last 10 messages
-    
-    if (!historyError && historyData.length > 0) {
-      for (const entry of historyData) {
-        messages.push({ role: 'user', content: entry.user_message });
-        messages.push({ role: 'assistant', content: entry.ai_response });
-      }
-    }
-    
-    // Generate an embedding for the user's query
-    const embeddingResponse = await fetch("https://api.openai.com/v1/embeddings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${openAIApiKey}`
-      },
-      body: JSON.stringify({
-        input: message,
-        model: "text-embedding-3-small"
-      })
-    });
-    
-    const embeddingData = await embeddingResponse.json();
-    
-    if (!embeddingResponse.ok) {
-      console.error('Error generating embedding:', embeddingData);
-      throw new Error('Failed to generate embedding');
-    }
-    
-    const queryEmbedding = embeddingData.data[0].embedding;
-    
-    // Retrieve relevant document chunks
-    // Note: This uses the pgvector extension which must be enabled in Supabase
-    const { data: relevantChunks, error: chunksError } = await supabase.rpc(
-      'match_documents',
-      {
-        query_embedding: queryEmbedding,
-        match_threshold: 0.7, // Adjust as needed
-        match_count: 3 // Retrieve top 3 matches
+    // Search for relevant document chunks using vector similarity
+    const { data: chunks, error: searchError } = await supabase.rpc(
+      'match_document_chunks', 
+      { 
+        query_embedding: questionEmbedding,
+        match_threshold: 0.5,
+        match_count: 5
       }
     );
-    
-    if (chunksError) {
-      console.error('Error retrieving relevant chunks:', chunksError);
-      // Fall back to regular completion without context
+
+    if (searchError) {
+      return new Response(
+        JSON.stringify({ error: 'Failed to search documents', details: searchError }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
     }
+
+    let answer;
     
-    // Prepare context for the AI
-    let context = "";
-    if (relevantChunks && relevantChunks.length > 0) {
-      context = "Here is relevant information from our knowledge base:\n\n";
-      relevantChunks.forEach((chunk, i) => {
-        context += `--- Excerpt ${i+1} ---\n${chunk.content}\n\n`;
+    if (chunks && chunks.length > 0) {
+      // Extract context from chunks
+      const context = chunks.map(chunk => chunk.content);
+      
+      // Generate response using context
+      answer = await generateResponse(question, context);
+    } else {
+      // Fallback if no relevant chunks found
+      answer = "I don't have specific information about that in my knowledge base. Please contact our team for more details.";
+    }
+
+    // Log the query for analytics
+    await supabase
+      .from('chat_queries')
+      .insert({
+        question,
+        answer,
+        chunks_used: chunks?.length || 0
       });
-    }
+
+    return new Response(
+      JSON.stringify({ answer }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+    );
     
-    // Add the context to the system prompt
-    const systemPromptWithContext = baseSystemPrompt + "\n\n" + context;
-    messages[0] = { role: 'system', content: systemPromptWithContext };
-    
-    // Add the current message
-    messages.push({ role: 'user', content: message });
-
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: messages,
-        temperature: 0.7,
-      }),
-    });
-
-    const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
-
-    // Store the conversation
-    await supabase.from('chat_conversations').insert({
-      session_id: sessionId,
-      user_message: message,
-      ai_response: aiResponse
-    });
-
-    return new Response(JSON.stringify({ response: aiResponse }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
   } catch (error) {
-    console.error('Error:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Failed to process your request. Please try again.' 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('Unexpected error:', error);
+    return new Response(
+      JSON.stringify({ error: 'An unexpected error occurred', details: error.message }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    );
   }
 });

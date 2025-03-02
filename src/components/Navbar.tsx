@@ -1,102 +1,127 @@
-
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { LogOut, User } from 'lucide-react';
+import { Button } from './ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
+  const { user, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+  const toggleMobileMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const links = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/services', label: 'Services' },
-    { href: '/projects', label: 'Projects' },
-    { href: '/contact', label: 'Contact' },
-  ];
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass py-4' : 'bg-transparent py-6'
-      }`}
-    >
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between">
-          <Link
-            to="/"
-            className="flex items-center space-x-2"
-          >
-            <img 
-              src="/lovable-uploads/6fa61244-de1a-4b9f-93bf-5fa60ca0bd73.png" 
-              alt="Practical AIML Logo" 
-              className="h-10 w-10"
-            />
-            <span className="text-2xl font-playfair font-bold heading-gradient">
-              Practical AIML
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === link.href
-                    ? 'text-primary'
-                    : 'text-foreground/80'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b shadow-sm">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
+              <img src="/logo.png" alt="Logo" className="h-8 w-auto mr-2" />
+              <span className="font-semibold text-xl">YourCompany</span>
+            </Link>
           </div>
 
-          {/* Mobile Navigation Trigger */}
-          <button
-            className="md:hidden text-foreground/80 hover:text-primary transition-colors"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation Menu */}
-        {isOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 glass animate-fade-in">
-            <div className="py-4 px-6 space-y-4">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className={`block text-sm font-medium transition-colors hover:text-primary ${
-                    location.pathname === link.href
-                      ? 'text-primary'
-                      : 'text-foreground/80'
-                  }`}
-                  onClick={() => setIsOpen(false)}
+          {/* Desktop navigation */}
+          <nav className="hidden md:flex items-center space-x-1">
+            <Link to="/" className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900">Home</Link>
+            <Link to="/services" className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900">Services</Link>
+            <Link to="/projects" className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900">Projects</Link>
+            <Link to="/about" className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900">About</Link>
+            <Link to="/contact" className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900">Contact</Link>
+            
+            {isAdmin && (
+              <Link to="/admin" className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900 font-medium">Admin</Link>
+            )}
+            
+            {user ? (
+              <div className="flex items-center ml-4 space-x-2">
+                <Button
+                  variant="ghost" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={() => signOut().then(() => navigate('/'))}
                 >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+                  <LogOut className="h-4 w-4 mr-1" /> Logout
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="default" 
+                size="sm"
+                className="ml-4"
+                onClick={() => navigate('/auth')}
+              >
+                <User className="h-4 w-4 mr-1" /> Login
+              </Button>
+            )}
+          </nav>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button variant="ghost" size="sm" onClick={toggleMobileMenu}>
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </Button>
           </div>
-        )}
+        </div>
       </div>
-    </nav>
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-b shadow-md">
+            <Link to="/" className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900" onClick={closeMobileMenu}>Home</Link>
+            <Link to="/services" className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900" onClick={closeMobileMenu}>Services</Link>
+            <Link to="/projects" className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900" onClick={closeMobileMenu}>Projects</Link>
+            <Link to="/about" className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900" onClick={closeMobileMenu}>About</Link>
+            <Link to="/contact" className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900" onClick={closeMobileMenu}>Contact</Link>
+            
+            {isAdmin && (
+              <Link to="/admin" className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-900 font-medium" onClick={closeMobileMenu}>Admin</Link>
+            )}
+            
+            {user ? (
+              <Button
+                variant="ghost" 
+                size="sm"
+                className="w-full justify-start px-3 py-2"
+                onClick={() => {
+                  signOut().then(() => navigate('/'));
+                  closeMobileMenu();
+                }}
+              >
+                <LogOut className="h-4 w-4 mr-2" /> Logout
+              </Button>
+            ) : (
+              <Button
+                variant="default" 
+                size="sm"
+                className="w-full justify-start px-3 py-2"
+                onClick={() => {
+                  navigate('/auth');
+                  closeMobileMenu();
+                }}
+              >
+                <User className="h-4 w-4 mr-2" /> Login
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
   );
 };
 
