@@ -66,17 +66,31 @@ const Admin = () => {
     formData.append('file', file);
 
     try {
+      console.log("Starting document upload...");
+      
       // Use the Supabase Edge Function directly
       const { data: functionData, error: functionError } = await supabase.functions.invoke(
         'upload-document',
         {
           body: formData,
+          headers: {
+            // Important: don't set Content-Type when sending FormData
+            // The browser will set the correct Content-Type with boundary
+          }
         }
       );
 
       if (functionError) {
+        console.error("Upload function error:", functionError);
         throw new Error(functionError.message || 'Failed to upload document');
       }
+      
+      if (!functionData || !functionData.documentId) {
+        console.error("Invalid response from upload function:", functionData);
+        throw new Error('Invalid response from upload function');
+      }
+      
+      console.log("Document uploaded successfully, now processing...");
       
       // Trigger document processing
       const { error: processError } = await supabase.functions.invoke(
@@ -87,6 +101,7 @@ const Admin = () => {
       );
 
       if (processError) {
+        console.error("Process function error:", processError);
         throw new Error(processError.message || 'Failed to process document');
       }
 
@@ -104,6 +119,7 @@ const Admin = () => {
         e.target.reset();
       }
     } catch (error: any) {
+      console.error("Upload error:", error);
       toast({
         title: "Upload failed",
         description: error.message,

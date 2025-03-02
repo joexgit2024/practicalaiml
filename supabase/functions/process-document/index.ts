@@ -36,11 +36,14 @@ serve(async (req) => {
       .single()
 
     if (fetchError) {
+      console.error('Error fetching document:', fetchError)
       return new Response(
         JSON.stringify({ error: 'Failed to fetch document', details: fetchError }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       )
     }
+
+    console.log('Processing document:', documentId)
 
     // In a real application, you would process the document here
     // For now, we'll simulate processing by waiting and then updating the status
@@ -55,6 +58,7 @@ serve(async (req) => {
       .eq('id', documentId)
 
     if (updateError) {
+      console.error('Error updating document status:', updateError)
       return new Response(
         JSON.stringify({ error: 'Failed to update document status', details: updateError }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }

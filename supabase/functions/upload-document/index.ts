@@ -24,10 +24,15 @@ serve(async (req) => {
       )
     }
 
+    // Create Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+
+    // Log environment variables (without exposing sensitive values)
+    console.log('SUPABASE_URL available:', !!Deno.env.get('SUPABASE_URL'))
+    console.log('SUPABASE_SERVICE_ROLE_KEY available:', !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'))
 
     // Sanitize filename
     const originalFilename = file.name;
@@ -42,31 +47,36 @@ serve(async (req) => {
     const filePath = `documents/${crypto.randomUUID()}.${fileExt}`
 
     // Check if the documents bucket exists and create if not
-    const { data: bucketData, error: bucketError } = await supabase.storage
-      .getBucket('documents')
-    
-    if (bucketError && bucketError.message.includes('not found')) {
-      // Create the documents bucket
-      const { error: createBucketError } = await supabase.storage
-        .createBucket('documents', {
-          public: false,
-        })
+    try {
+      const { data: bucketData, error: bucketError } = await supabase.storage
+        .getBucket('documents')
       
-      if (createBucketError) {
-        console.error('Failed to create bucket:', createBucketError)
-        return new Response(
-          JSON.stringify({ error: 'Failed to create storage bucket', details: createBucketError }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-        )
+      if (bucketError && bucketError.message.includes('not found')) {
+        // Create the documents bucket
+        const { error: createBucketError } = await supabase.storage
+          .createBucket('documents', {
+            public: false,
+          })
+        
+        if (createBucketError) {
+          console.error('Failed to create bucket:', createBucketError)
+          return new Response(
+            JSON.stringify({ error: 'Failed to create storage bucket', details: createBucketError }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          )
+        }
       }
+    } catch (bucketCheckError) {
+      console.error('Error checking bucket:', bucketCheckError)
     }
 
     // Upload file to storage
+    console.log('Attempting to upload file to storage:', filePath)
     const { data: storageData, error: storageError } = await supabase.storage
       .from('documents')
       .upload(filePath, file, {
         contentType: file.type,
-        upsert: false
+        upsert: true // Changed to true to overwrite if file exists
       })
 
     if (storageError) {
@@ -78,13 +88,14 @@ serve(async (req) => {
     }
 
     // Create document record in database
+    console.log('File uploaded successfully, creating database record')
     const { data: document, error: dbError } = await supabase
       .from('documents')
       .insert({
         filename: finalFileName,
         file_path: filePath,
         content_type: file.type,
-        size: file.size,
+        file_size: file.size,
         status: 'pending', // Will be processed later
       })
       .select()
