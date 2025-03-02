@@ -53,12 +53,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // For now, hardcode admin check to avoid table errors
-    // We'll need to create a user_roles table later
-    // This is temporary until we set up proper user roles
-    const adminEmails = ['admin@example.com']; // Add your admin emails here
-    const { data: userData } = await supabase.auth.getUser();
-    setIsAdmin(adminEmails.includes(userData.user?.email || ''));
+    // Query the user_roles table to check if user has admin role
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    // If we find a record and there's no error, the user is an admin
+    setIsAdmin(!!data && !error);
+    
+    // If no admin is found in the database yet, we'll use a fallback
+    // This allows the first user to bootstrap the admin role
+    if (!data && error) {
+      // Fallback for first admin - check if user email is in adminEmails
+      const adminEmails = ['admin@example.com']; // Add your admin emails here
+      const { data: userData } = await supabase.auth.getUser();
+      const isAdminByEmail = adminEmails.includes(userData.user?.email || '');
+      
+      // If user is admin by email, add them to the user_roles table
+      if (isAdminByEmail) {
+        // Try to insert the user as admin
+        const { error: insertError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role: 'admin'
+          });
+        
+        // If insert was successful, set isAdmin to true
+        if (!insertError) {
+          setIsAdmin(true);
+        }
+      }
+    }
   }
 
   const signIn = async (email: string, password: string) => {
