@@ -1,127 +1,142 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+console.log("Upload document function started");
 
 serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
-  }
-
   try {
-    const formData = await req.formData()
-    const file = formData.get('file')
-
-    if (!file) {
+    console.log("Received upload request");
+    
+    // Get the form data from the request
+    const formData = await req.formData();
+    const file = formData.get("file");
+    
+    // Check if the file exists and is a File object
+    if (!file || !(file instanceof File)) {
+      console.error("No file found in form data or incorrect file format");
       return new Response(
-        JSON.stringify({ error: 'No file uploaded' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      )
+        JSON.stringify({ error: "No file found in form data" }),
+        { headers: { "Content-Type": "application/json" }, status: 400 }
+      );
     }
 
-    // Create Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    console.log(`Processing file: ${file.name}, size: ${file.size}, type: ${file.type}`);
 
-    // Log environment variables (without exposing sensitive values)
-    console.log('SUPABASE_URL available:', !!Deno.env.get('SUPABASE_URL'))
-    console.log('SUPABASE_SERVICE_ROLE_KEY available:', !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'))
+    // Create a Supabase client with the auth context from the request
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      {
+        global: {
+          headers: { Authorization: req.headers.get("Authorization")! },
+        },
+      }
+    );
 
-    // Sanitize filename
-    const originalFilename = file.name;
-    const sanitizedFileName = originalFilename.replace(/[^\x00-\x7F]/g, '');
-    const fileExt = sanitizedFileName.split('.').pop();
-    const fileNameWithoutExt = sanitizedFileName.split('.').slice(0, -1).join('.');
-    const finalFileName = fileNameWithoutExt 
-      ? sanitizedFileName 
-      : `uploaded_document_${new Date().toISOString().slice(0, -5)}.${fileExt}`;
-
-    // Generate a unique file path
-    const filePath = `documents/${crypto.randomUUID()}.${fileExt}`
-
-    // Check if the documents bucket exists and create if not
+    // Check if the documents bucket exists, create it if it doesn't
     try {
-      const { data: bucketData, error: bucketError } = await supabase.storage
-        .getBucket('documents')
+      const { data: buckets, error: bucketsError } = await supabaseClient.storage.listBuckets();
       
-      if (bucketError && bucketError.message.includes('not found')) {
-        // Create the documents bucket
-        const { error: createBucketError } = await supabase.storage
-          .createBucket('documents', {
-            public: false,
-          })
+      if (bucketsError) {
+        throw new Error(`Error listing buckets: ${bucketsError.message}`);
+      }
+      
+      const documentsBucketExists = buckets.some(bucket => bucket.name === "documents");
+      
+      if (!documentsBucketExists) {
+        console.log("Creating documents bucket");
+        const { error: createBucketError } = await supabaseClient.storage.createBucket("documents", {
+          public: false,
+          fileSizeLimit: 50 * 1024 * 1024, // 50MB limit
+        });
         
         if (createBucketError) {
-          console.error('Failed to create bucket:', createBucketError)
-          return new Response(
-            JSON.stringify({ error: 'Failed to create storage bucket', details: createBucketError }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-          )
+          throw new Error(`Error creating documents bucket: ${createBucketError.message}`);
         }
+        console.log("Documents bucket created successfully");
       }
-    } catch (bucketCheckError) {
-      console.error('Error checking bucket:', bucketCheckError)
+    } catch (error) {
+      console.error("Error checking/creating bucket:", error);
+      return new Response(
+        JSON.stringify({ error: "Error setting up storage bucket" }),
+        { headers: { "Content-Type": "application/json" }, status: 500 }
+      );
     }
 
-    // Upload file to storage
-    console.log('Attempting to upload file to storage:', filePath)
-    const { data: storageData, error: storageError } = await supabase.storage
-      .from('documents')
+    // Get file extension
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+    if (!['pdf', 'docx', 'txt'].includes(fileExt)) {
+      return new Response(
+        JSON.stringify({ error: "Only PDF, DOCX, and TXT files are supported" }),
+        { headers: { "Content-Type": "application/json" }, status: 400 }
+      );
+    }
+
+    // Create a unique filename
+    const uniqueFilename = `${Date.now()}_${file.name}`;
+    const filePath = `${uniqueFilename}`;
+
+    // Upload the file to Supabase Storage
+    console.log(`Uploading file to path: ${filePath}`);
+    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+      .from("documents")
       .upload(filePath, file, {
         contentType: file.type,
-        upsert: true // Changed to true to overwrite if file exists
-      })
+        cacheControl: "3600",
+      });
 
-    if (storageError) {
-      console.error('Storage error:', storageError)
+    if (uploadError) {
+      console.error("Error uploading file:", uploadError);
       return new Response(
-        JSON.stringify({ error: 'Failed to upload file to storage', details: storageError }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
+        JSON.stringify({ error: `Error uploading file: ${uploadError.message}` }),
+        { headers: { "Content-Type": "application/json" }, status: 500 }
+      );
     }
 
-    // Create document record in database
-    console.log('File uploaded successfully, creating database record')
-    const { data: document, error: dbError } = await supabase
-      .from('documents')
+    // Get the public URL for the file
+    const { data: urlData } = await supabaseClient.storage
+      .from("documents")
+      .getPublicUrl(filePath);
+
+    const publicUrl = urlData.publicUrl;
+    console.log(`File uploaded successfully. Public URL: ${publicUrl}`);
+
+    // Create a record in the documents table
+    const { data: documentData, error: documentError } = await supabaseClient
+      .from("documents")
       .insert({
-        filename: finalFileName,
         file_path: filePath,
-        content_type: file.type,
+        file_name: file.name,
+        file_type: fileExt,
         file_size: file.size,
-        status: 'pending', // Will be processed later
+        title: file.name,
+        status: "uploaded",
+        content_type: file.type || `application/${fileExt}`, // Save the content type
       })
       .select()
-      .single()
+      .single();
 
-    if (dbError) {
-      console.error('Database error:', dbError)
+    if (documentError) {
+      console.error("Error creating document record:", documentError);
       return new Response(
-        JSON.stringify({ error: 'Failed to save document metadata', details: dbError }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
+        JSON.stringify({ error: `Error creating document record: ${documentError.message}` }),
+        { headers: { "Content-Type": "application/json" }, status: 500 }
+      );
     }
 
+    console.log(`Document record created with ID: ${documentData.id}`);
+
+    // Return the document ID to the client
     return new Response(
-      JSON.stringify({ 
-        message: 'Document uploaded successfully', 
-        documentId: document.id,
-        filePath 
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-    )
+      JSON.stringify({ documentId: documentData.id }),
+      { headers: { "Content-Type": "application/json" }, status: 200 }
+    );
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error("Unexpected error:", error);
     return new Response(
-      JSON.stringify({ error: 'An unexpected error occurred', details: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    )
+      JSON.stringify({ error: `Unexpected error: ${error.message}` }),
+      { headers: { "Content-Type": "application/json" }, status: 500 }
+    );
   }
-})
+});

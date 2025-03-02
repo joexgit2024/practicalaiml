@@ -584,6 +584,7 @@ export type Database = {
       documents: {
         Row: {
           content: string | null
+          content_type: string | null
           created_at: string
           description: string | null
           embedding: string | null
@@ -598,6 +599,7 @@ export type Database = {
         }
         Insert: {
           content?: string | null
+          content_type?: string | null
           created_at?: string
           description?: string | null
           embedding?: string | null
@@ -612,6 +614,7 @@ export type Database = {
         }
         Update: {
           content?: string | null
+          content_type?: string | null
           created_at?: string
           description?: string | null
           embedding?: string | null

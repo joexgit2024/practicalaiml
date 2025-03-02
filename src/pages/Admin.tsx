@@ -67,6 +67,7 @@ const Admin = () => {
 
     try {
       console.log("Starting document upload...");
+      console.log("File type:", file.type); // Log the file's content type
       
       // Use the Supabase Edge Function directly
       const { data: functionData, error: functionError } = await supabase.functions.invoke(
@@ -74,8 +75,7 @@ const Admin = () => {
         {
           body: formData,
           headers: {
-            // Important: don't set Content-Type when sending FormData
-            // The browser will set the correct Content-Type with boundary
+            // Content type is automatically set by the browser when using FormData
           }
         }
       );
@@ -180,7 +180,7 @@ const Admin = () => {
               <div key={doc.id} className="py-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-medium">{doc.filename}</h3>
+                    <h3 className="font-medium">{doc.file_name}</h3>
                     <p className="text-sm text-muted-foreground">
                       Uploaded: {new Date(doc.created_at).toLocaleString()}
                     </p>
