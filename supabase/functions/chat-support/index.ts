@@ -58,7 +58,7 @@ async function generateResponse(question: string, context: string[]) {
       Comprehensive AI Solutions for Business Needs
       Providing enterprise and small business solutions, including AI & ML services, full-stack web development with enterprise security, and data services.
 
-      AI & ML Services
+      AI & ML Services scope:
       Strategy & Consulting: AI readiness assessment, custom AI roadmap, industry use case identification.
       ML Model Development: Custom ML models, predictive analytics, NLP (chatbots, sentiment analysis), computer vision.
       AI Integration: AI/ML in CRM/ERP, API development, cloud-based AI (AWS, Azure, GCP).
@@ -87,7 +87,7 @@ async function generateResponse(question: string, context: string[]) {
       Project Management: Agile/Scrum-based AI & web development.
       Post-Launch Support: Maintenance, feature updates.
       Training & Workshops: AI, ML, and web development training.
-      Why Choose Us?
+      Why Choose Us? benefits:
       Tailored AI Solutions: Customized for your business needs.
       End-to-End Expertise: Strategy to implementation & support.
       Industry Experience: Proven success in retail, healthcare, finance, and more.
