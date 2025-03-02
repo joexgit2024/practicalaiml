@@ -44,36 +44,6 @@ serve(async (req) => {
       }
     );
 
-    // Check if the documents bucket exists, create it if it doesn't
-    try {
-      const { data: buckets, error: bucketsError } = await supabaseClient.storage.listBuckets();
-      
-      if (bucketsError) {
-        throw new Error(`Error listing buckets: ${bucketsError.message}`);
-      }
-      
-      const documentsBucketExists = buckets.some(bucket => bucket.name === "documents");
-      
-      if (!documentsBucketExists) {
-        console.log("Creating documents bucket");
-        const { error: createBucketError } = await supabaseClient.storage.createBucket("documents", {
-          public: false,
-          fileSizeLimit: 50 * 1024 * 1024, // 50MB limit
-        });
-        
-        if (createBucketError) {
-          throw new Error(`Error creating documents bucket: ${createBucketError.message}`);
-        }
-        console.log("Documents bucket created successfully");
-      }
-    } catch (error) {
-      console.error("Error checking/creating bucket:", error);
-      return new Response(
-        JSON.stringify({ error: "Error setting up storage bucket" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
-      );
-    }
-
     // Get file extension
     const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
     if (!['pdf', 'docx', 'txt'].includes(fileExt)) {

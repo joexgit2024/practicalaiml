@@ -76,7 +76,7 @@ const Admin = () => {
         'upload-document',
         {
           body: formData,
-          // Important: Do not set content-type header here, let the browser set it automatically
+          // Do not set content-type header, let the browser set it automatically
           // for FormData which includes the necessary multipart/form-data boundary
         }
       );
