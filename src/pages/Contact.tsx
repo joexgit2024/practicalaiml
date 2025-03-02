@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import ChatDialog from '@/components/ChatDialog';
-import DocumentUploader from '@/components/DocumentUploader';
 
 const Contact = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -22,58 +20,37 @@ const Contact = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
         <div>
-          <Tabs defaultValue="contact" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="contact">Contact Form</TabsTrigger>
-              <TabsTrigger value="document">Knowledge Base</TabsTrigger>
-            </TabsList>
-            <TabsContent value="contact">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Send us a message</CardTitle>
-                  <CardDescription>
-                    Fill out the form below and we'll get back to you within 24 hours.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label htmlFor="first-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First name</label>
-                      <Input id="first-name" placeholder="John" />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="last-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last name</label>
-                      <Input id="last-name" placeholder="Doe" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
-                    <Input id="email" placeholder="johndoe@example.com" type="email" />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
-                    <Textarea id="message" placeholder="Tell us about your project or question..." />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">Send Message</Button>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-            <TabsContent value="document">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Upload Knowledge Base Document</CardTitle>
-                  <CardDescription>
-                    Add documents to our knowledge base to improve our AI support capabilities.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <DocumentUploader />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          <Card>
+            <CardHeader>
+              <CardTitle>Send us a message</CardTitle>
+              <CardDescription>
+                Fill out the form below and we'll get back to you within 24 hours.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="first-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First name</label>
+                  <Input id="first-name" placeholder="John" />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="last-name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last name</label>
+                  <Input id="last-name" placeholder="Doe" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+                <Input id="email" placeholder="johndoe@example.com" type="email" />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Message</label>
+                <Textarea id="message" placeholder="Tell us about your project or question..." />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full">Send Message</Button>
+            </CardFooter>
+          </Card>
           <div className="mt-8">
             <Card>
               <CardHeader>
