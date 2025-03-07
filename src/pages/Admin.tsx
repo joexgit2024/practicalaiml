@@ -1,10 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import DocumentUploader from '@/components/admin/DocumentUploader';
 import DocumentList from '@/components/admin/DocumentList';
+import DocumentStats from '@/components/admin/DocumentStats';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface Document {
   id: string;
@@ -15,22 +15,12 @@ interface Document {
 }
 
 const Admin = () => {
-  const { user, isAdmin, isLoading } = useAuth();
-  const navigate = useNavigate();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loadingDocs, setLoadingDocs] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && (!user || !isAdmin)) {
-      navigate('/');
-    }
-  }, [user, isAdmin, isLoading, navigate]);
-
-  useEffect(() => {
-    if (user) {
-      fetchDocuments();
-    }
-  }, [user]);
+    fetchDocuments();
+  }, []);
 
   const fetchDocuments = async () => {
     try {
@@ -49,13 +39,18 @@ const Admin = () => {
     }
   };
 
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
+  // Calculate document statistics
+  const totalDocuments = documents.length;
+  const processedDocuments = documents.filter(doc => doc.status === 'processed').length;
+  const pendingDocuments = totalDocuments - processedDocuments;
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8">Admin Document Management</h1>
+    <AdminLayout title="Admin Document Management">
+      <DocumentStats 
+        totalDocuments={totalDocuments}
+        processedDocuments={processedDocuments}
+        pendingDocuments={pendingDocuments}
+      />
 
       <DocumentUploader onUploadSuccess={fetchDocuments} />
 
@@ -67,7 +62,7 @@ const Admin = () => {
           onDocumentDeleted={fetchDocuments}
         />
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 
