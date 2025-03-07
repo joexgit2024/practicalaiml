@@ -583,46 +583,55 @@ export type Database = {
       }
       documents: {
         Row: {
+          accessible_to_all: boolean | null
           content: string | null
           content_type: string | null
           created_at: string
           description: string | null
+          download_count: number | null
           embedding: string | null
           file_name: string
           file_path: string
           file_size: number
           file_type: string
           id: string
+          is_demo: boolean | null
           status: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          accessible_to_all?: boolean | null
           content?: string | null
           content_type?: string | null
           created_at?: string
           description?: string | null
+          download_count?: number | null
           embedding?: string | null
           file_name: string
           file_path: string
           file_size: number
           file_type: string
           id?: string
+          is_demo?: boolean | null
           status?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          accessible_to_all?: boolean | null
           content?: string | null
           content_type?: string | null
           created_at?: string
           description?: string | null
+          download_count?: number | null
           embedding?: string | null
           file_name?: string
           file_path?: string
           file_size?: number
           file_type?: string
           id?: string
+          is_demo?: boolean | null
           status?: string | null
           title?: string
           updated_at?: string
@@ -2694,6 +2703,13 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      increment: {
+        Args: {
+          row_id: string
+          column_name: string
+        }
+        Returns: number
       }
       ivfflat_bit_support: {
         Args: {
