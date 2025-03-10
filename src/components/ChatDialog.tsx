@@ -37,6 +37,12 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
     if (open) {
       if (messages.length === 0) {
         sessionIdRef.current = uuidv4();
+        
+        // Add welcome message
+        setMessages([{
+          role: 'assistant',
+          content: 'Hello! I\'m your AI assistant. I can answer questions based on documents that have been uploaded to our system. How can I help you today?'
+        }]);
       }
     }
   }, [open, messages.length]);
@@ -88,6 +94,11 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
     } catch (error) {
       console.error('Chat error:', error);
       toast.error('Failed to send message. Please try again.');
+      
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'I\'m sorry, I encountered an error. Please try again or contact support if the issue persists.' 
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -103,10 +114,10 @@ const ChatDialog = ({ open, onOpenChange }: ChatDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col p-0">
-        <div className="p-6">
+        <div className="p-6 border-b">
           <h2 className="text-2xl font-semibold">Live Chat Support</h2>
           <p className="text-sm text-muted-foreground">
-            Ask us anything about our services
+            Ask us anything about our services. Our AI assistant uses our knowledge base to answer your questions.
           </p>
         </div>
 
