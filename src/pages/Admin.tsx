@@ -20,6 +20,22 @@ const Admin = () => {
 
   useEffect(() => {
     fetchDocuments();
+    
+    // Set up real-time subscription for document status updates
+    const subscription = supabase
+      .channel('document-updates')
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'documents' 
+      }, () => {
+        fetchDocuments();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(subscription);
+    };
   }, []);
 
   const fetchDocuments = async () => {

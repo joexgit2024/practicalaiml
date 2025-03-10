@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, UploadCloud, AlertCircle } from 'lucide-react';
+import { Upload, UploadCloud, AlertCircle, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface DocumentUploaderProps {
@@ -74,8 +74,26 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadSuccess }) 
       
       toast({
         title: "Success!",
-        description: "Document uploaded successfully.",
+        description: "Document uploaded successfully. It will now be processed for text extraction and analysis.",
       });
+      
+      // Trigger process-document function
+      try {
+        const { error: processError } = await supabase.functions.invoke(
+          'process-document',
+          {
+            body: { documentId: data.documentId },
+          }
+        );
+        
+        if (processError) {
+          console.warn("Process document warning:", processError);
+          // Not throwing error here since the upload itself was successful
+        }
+      } catch (processErr) {
+        console.warn("Failed to trigger document processing:", processErr);
+        // Not failing the entire operation if just the processing trigger fails
+      }
       
       // Notify parent component to refresh documents
       onUploadSuccess();
@@ -101,6 +119,21 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadSuccess }) 
   return (
     <div className="bg-card p-6 rounded-lg shadow-md mb-8">
       <h2 className="text-xl font-semibold mb-4">Upload New Document</h2>
+      
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4 flex items-start gap-2">
+        <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+        <div className="text-sm text-blue-700">
+          <p className="font-medium">Document Processing:</p>
+          <p>After upload, documents go through these steps:</p>
+          <ol className="list-decimal pl-5 mt-1 space-y-1">
+            <li>Storage in Supabase bucket</li>
+            <li>Text extraction from the document</li>
+            <li>Analysis and indexing for searching</li>
+            <li>Status update when processing completes</li>
+          </ol>
+        </div>
+      </div>
+      
       {error && (
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />

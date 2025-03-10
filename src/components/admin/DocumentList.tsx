@@ -68,7 +68,15 @@ const DocumentList: React.FC<DocumentListProps> = ({
   // Filter documents based on search term and status
   const filteredDocuments = documents.filter(doc => {
     const matchesSearch = doc.file_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || doc.status === statusFilter;
+    let matchesStatus = statusFilter === 'all';
+    
+    if (statusFilter === 'processed') {
+      matchesStatus = doc.status === 'processed';
+    } else if (statusFilter === 'processing') {
+      // Fix: Include both 'processing' and 'uploaded' in the processing filter
+      matchesStatus = doc.status === 'processing' || doc.status === 'uploaded';
+    }
+    
     return matchesSearch && matchesStatus;
   });
 
