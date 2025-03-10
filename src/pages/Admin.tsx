@@ -5,6 +5,7 @@ import DocumentUploader from '@/components/admin/DocumentUploader';
 import DocumentList from '@/components/admin/DocumentList';
 import DocumentStats from '@/components/admin/DocumentStats';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { toast } from 'sonner';
 
 interface Document {
   id: string;
@@ -23,12 +24,22 @@ const Admin = () => {
     
     // Set up real-time subscription for document status updates
     const subscription = supabase
-      .channel('document-updates')
+      .channel('document-changes')
       .on('postgres_changes', { 
-        event: 'UPDATE', 
+        event: '*', 
         schema: 'public', 
         table: 'documents' 
-      }, () => {
+      }, (payload) => {
+        console.log('Document change detected:', payload);
+        if (payload.eventType === 'UPDATE' && payload.new.status !== payload.old.status) {
+          // Show notification for status changes
+          const statusMsg = payload.new.status === 'processed' 
+            ? 'Document processing completed successfully!' 
+            : `Document status changed to: ${payload.new.status}`;
+          
+          toast(statusMsg);
+        }
+        // Refresh documents list
         fetchDocuments();
       })
       .subscribe();
@@ -58,7 +69,8 @@ const Admin = () => {
   // Calculate document statistics
   const totalDocuments = documents.length;
   const processedDocuments = documents.filter(doc => doc.status === 'processed').length;
-  const pendingDocuments = totalDocuments - processedDocuments;
+  const pendingDocuments = documents.filter(doc => ['uploaded', 'processing'].includes(doc.status)).length;
+  const errorDocuments = documents.filter(doc => doc.status === 'error').length;
 
   return (
     <AdminLayout title="Admin Document Management">

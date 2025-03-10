@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, Trash2, Search, Filter } from 'lucide-react';
+import { FileText, Trash2, Search, Filter, RefreshCw } from 'lucide-react';
 
 interface Document {
   id: string;
@@ -29,6 +29,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [processingDocId, setProcessingDocId] = useState<string | null>(null);
 
   const handleDeleteDocument = async (doc: Document) => {
     try {
@@ -65,6 +66,39 @@ const DocumentList: React.FC<DocumentListProps> = ({
     }
   };
 
+  const handleProcessDocument = async (documentId: string) => {
+    setProcessingDocId(documentId);
+    try {
+      toast({
+        title: "Processing document",
+        description: "Document processing has started. This may take a few moments."
+      });
+
+      const { error } = await supabase.functions.invoke(
+        'process-document',
+        {
+          body: { documentId },
+        }
+      );
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Processing initiated",
+        description: "Document processing has been started. The status will update automatically when complete."
+      });
+    } catch (error: any) {
+      console.error("Error processing document:", error);
+      toast({
+        title: "Processing failed",
+        description: error.message || "Failed to process document",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingDocId(null);
+    }
+  };
+
   // Filter documents based on search term and status
   const filteredDocuments = documents.filter(doc => {
     const matchesSearch = doc.file_name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -73,12 +107,34 @@ const DocumentList: React.FC<DocumentListProps> = ({
     if (statusFilter === 'processed') {
       matchesStatus = doc.status === 'processed';
     } else if (statusFilter === 'processing') {
-      // Fix: Include both 'processing' and 'uploaded' in the processing filter
+      // Include both 'processing' and 'uploaded' in the processing filter
       matchesStatus = doc.status === 'processing' || doc.status === 'uploaded';
+    } else if (statusFilter === 'error') {
+      matchesStatus = doc.status === 'error';
     }
     
     return matchesSearch && matchesStatus;
   });
+
+  const getStatusLabel = (status: string) => {
+    switch(status) {
+      case 'processed': return 'Processed';
+      case 'processing': return 'Processing';
+      case 'uploaded': return 'Awaiting Processing';
+      case 'error': return 'Error';
+      default: return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case 'processed': return 'text-green-600';
+      case 'processing': return 'text-amber-600';
+      case 'uploaded': return 'text-blue-600';
+      case 'error': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  };
 
   if (isLoading) {
     return <div className="flex justify-center py-8"><FileText className="animate-pulse mr-2" /> Loading documents...</div>;
@@ -113,6 +169,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="processed">Processed</SelectItem>
               <SelectItem value="processing">Processing</SelectItem>
+              <SelectItem value="error">Error</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -133,20 +190,41 @@ const DocumentList: React.FC<DocumentListProps> = ({
                       Uploaded: {new Date(doc.created_at).toLocaleString()}
                     </p>
                     <p className="text-sm">
-                      Status: <span className={`font-medium ${doc.status === 'processed' ? 'text-green-600' : 'text-amber-600'}`}>
-                        {doc.status === 'processed' ? 'Processed' : 'Processing'}
+                      Status: <span className={`font-medium ${getStatusColor(doc.status)}`}>
+                        {getStatusLabel(doc.status)}
                       </span>
                     </p>
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDeleteDocument(doc)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-1" /> Delete
-                </Button>
+                <div className="flex gap-2">
+                  {(doc.status === 'uploaded' || doc.status === 'error') && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleProcessDocument(doc.id)}
+                      disabled={processingDocId === doc.id}
+                      className="text-blue-600"
+                    >
+                      {processingDocId === doc.id ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-1 animate-spin" /> Processing...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-1" /> Process
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteDocument(doc)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" /> Delete
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
