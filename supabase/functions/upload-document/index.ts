@@ -107,6 +107,7 @@ serve(async (req) => {
           title TEXT NOT NULL,
           file_name TEXT NOT NULL,
           file_path TEXT NOT NULL,
+          file_type TEXT NOT NULL,
           file_size INTEGER,
           content_type TEXT,
           status TEXT DEFAULT 'uploaded',
@@ -129,6 +130,9 @@ serve(async (req) => {
       });
     }
 
+    // Extract file type from file extension
+    const fileType = fileExt?.toLowerCase() || 'unknown';
+
     // Insert the document record into the database
     const { data: documentData, error: documentError } = await supabase
       .from('documents')
@@ -136,6 +140,7 @@ serve(async (req) => {
         title: file.name,
         file_name: file.name,
         file_path: storagePath,
+        file_type: fileType,
         file_size: file.size,
         content_type: file.type,
         status: 'uploaded'
