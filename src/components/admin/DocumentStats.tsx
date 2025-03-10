@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { FileText, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 interface DocumentStatsProps {
@@ -10,51 +10,59 @@ interface DocumentStatsProps {
   errorDocuments?: number;
 }
 
-const DocumentStats: React.FC<DocumentStatsProps> = ({ 
-  totalDocuments, 
+const DocumentStats: React.FC<DocumentStatsProps> = ({
+  totalDocuments,
   processedDocuments,
   pendingDocuments,
   errorDocuments = 0
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
-          <FileText className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalDocuments}</div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Processed</CardTitle>
-          <CheckCircle className="h-4 w-4 text-green-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{processedDocuments}</div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Pending</CardTitle>
-          <Clock className="h-4 w-4 text-amber-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{pendingDocuments}</div>
+        <CardContent className="flex items-center p-6">
+          <div className="bg-blue-100 p-3 rounded-full mr-4">
+            <FileText className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Total Documents</p>
+            <h3 className="text-2xl font-bold">{totalDocuments}</h3>
+          </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Errors</CardTitle>
-          <AlertCircle className="h-4 w-4 text-red-500" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{errorDocuments}</div>
+        <CardContent className="flex items-center p-6">
+          <div className="bg-green-100 p-3 rounded-full mr-4">
+            <CheckCircle className="h-6 w-6 text-green-600" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Processed</p>
+            <h3 className="text-2xl font-bold">{processedDocuments}</h3>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="flex items-center p-6">
+          <div className="bg-yellow-100 p-3 rounded-full mr-4">
+            <Clock className="h-6 w-6 text-yellow-600" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Pending</p>
+            <h3 className="text-2xl font-bold">{pendingDocuments}</h3>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="flex items-center p-6">
+          <div className="bg-red-100 p-3 rounded-full mr-4">
+            <AlertCircle className="h-6 w-6 text-red-600" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Errors</p>
+            <h3 className="text-2xl font-bold">{errorDocuments}</h3>
+          </div>
         </CardContent>
       </Card>
     </div>
