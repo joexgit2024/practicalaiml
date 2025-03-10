@@ -1423,6 +1423,104 @@ export type Database = {
         }
         Relationships: []
       }
+      question_history: {
+        Row: {
+          consolidated_response: string | null
+          created_at: string
+          deepseek_response: string
+          id: string
+          openai_response: string
+          question: string
+          user_id: string | null
+        }
+        Insert: {
+          consolidated_response?: string | null
+          created_at?: string
+          deepseek_response: string
+          id?: string
+          openai_response: string
+          question: string
+          user_id?: string | null
+        }
+        Update: {
+          consolidated_response?: string | null
+          created_at?: string
+          deepseek_response?: string
+          id?: string
+          openai_response?: string
+          question?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      resume_keywords: {
+        Row: {
+          created_at: string
+          extractor: string
+          id: string
+          keywords: Json
+          resume_id: string
+        }
+        Insert: {
+          created_at?: string
+          extractor: string
+          id?: string
+          keywords: Json
+          resume_id: string
+        }
+        Update: {
+          created_at?: string
+          extractor?: string
+          id?: string
+          keywords?: Json
+          resume_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resume_keywords_resume_id_fkey"
+            columns: ["resume_id"]
+            isOneToOne: false
+            referencedRelation: "resumes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resumes: {
+        Row: {
+          content: string | null
+          created_at: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       return_status_history: {
         Row: {
           created_at: string | null
@@ -2102,6 +2200,54 @@ export type Database = {
             referencedColumns: ["customer_id"]
           },
         ]
+      }
+      smart_contracts: {
+        Row: {
+          blockchain_details: Json | null
+          client_name: string
+          contract_type: string
+          created_at: string | null
+          description: string | null
+          end_date: string
+          id: string
+          start_date: string
+          status: string | null
+          template_parameters: Json | null
+          title: string
+          updated_at: string | null
+          value: number
+        }
+        Insert: {
+          blockchain_details?: Json | null
+          client_name: string
+          contract_type: string
+          created_at?: string | null
+          description?: string | null
+          end_date: string
+          id?: string
+          start_date: string
+          status?: string | null
+          template_parameters?: Json | null
+          title: string
+          updated_at?: string | null
+          value: number
+        }
+        Update: {
+          blockchain_details?: Json | null
+          client_name?: string
+          contract_type?: string
+          created_at?: string | null
+          description?: string | null
+          end_date?: string
+          id?: string
+          start_date?: string
+          status?: string | null
+          template_parameters?: Json | null
+          title?: string
+          updated_at?: string | null
+          value?: number
+        }
+        Relationships: []
       }
       supplier_risk_assessments: {
         Row: {

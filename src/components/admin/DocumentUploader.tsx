@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Upload, UploadCloud } from 'lucide-react';
 
 interface DocumentUploaderProps {
   onUploadSuccess: () => void;
@@ -34,41 +35,28 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadSuccess }) 
       console.log("Starting document upload...");
       
       // Use the Supabase Edge Function
-      const { data: functionData, error: functionError } = await supabase.functions.invoke(
+      const { data, error } = await supabase.functions.invoke(
         'upload-document',
         {
           body: formData,
         }
       );
 
-      if (functionError) {
-        console.error("Upload function error:", functionError);
-        throw new Error(functionError.message || 'Failed to upload document');
+      if (error) {
+        console.error("Upload function error:", error);
+        throw new Error(error.message || 'Failed to upload document');
       }
       
-      if (!functionData || !functionData.documentId) {
-        console.error("Invalid response from upload function:", functionData);
+      if (!data) {
+        console.error("Invalid response from upload function:", data);
         throw new Error('Invalid response from upload function');
       }
       
-      console.log("Document uploaded successfully, now processing...");
+      console.log("Document uploaded successfully:", data);
       
-      // Trigger document processing
-      const { error: processError } = await supabase.functions.invoke(
-        'process-document',
-        {
-          body: { documentId: functionData.documentId },
-        }
-      );
-
-      if (processError) {
-        console.error("Process function error:", processError);
-        throw new Error(processError.message || 'Failed to process document');
-      }
-
       toast({
         title: "Success!",
-        description: "Document uploaded and processing started.",
+        description: "Document uploaded successfully.",
       });
       
       // Notify parent component to refresh documents
@@ -105,13 +93,24 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadSuccess }) 
             accept=".pdf,.docx,.txt"
             onChange={handleFileChange}
             required
+            className="cursor-pointer"
           />
           <p className="text-sm text-muted-foreground mt-1">
             Documents will be processed and used for the chat interface.
           </p>
         </div>
-        <Button type="submit" disabled={!file || uploading}>
-          {uploading ? 'Uploading...' : 'Upload Document'}
+        <Button type="submit" disabled={!file || uploading} className="w-full sm:w-auto">
+          {uploading ? (
+            <>
+              <Upload className="mr-2 h-4 w-4 animate-spin" />
+              Uploading...
+            </>
+          ) : (
+            <>
+              <UploadCloud className="mr-2 h-4 w-4" />
+              Upload Document
+            </>
+          )}
         </Button>
       </form>
     </div>

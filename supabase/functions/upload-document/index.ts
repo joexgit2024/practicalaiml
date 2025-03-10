@@ -14,7 +14,7 @@ serve(async (req) => {
     const formData = await req.formData();
     const file = formData.get('file');
 
-    if (!file) {
+    if (!file || !(file instanceof File)) {
       console.error("No file provided in the request");
       return new Response(
         JSON.stringify({ error: 'No file provided' }),
@@ -22,11 +22,21 @@ serve(async (req) => {
       );
     }
 
+    console.log(`Received file: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
+
     // Create Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseServiceRoleKey) {
+      console.error("Missing Supabase environment variables");
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     // Generate a unique file path for storage
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -35,8 +45,27 @@ serve(async (req) => {
     const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9]/g, '-');
     const storagePath = `${sanitizedFileName}-${timestamp}.${fileExt}`;
 
-    console.log(`Uploading file: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
     console.log(`Storage path: ${storagePath}`);
+
+    // Check if the 'documents' bucket exists, if not create it
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const documentsBucketExists = buckets?.some(bucket => bucket.name === 'documents');
+
+    if (!documentsBucketExists) {
+      console.log("Creating 'documents' bucket...");
+      const { error: bucketError } = await supabase.storage.createBucket('documents', {
+        public: true,
+        fileSizeLimit: 52428800 // 50MB
+      });
+
+      if (bucketError) {
+        console.error("Failed to create bucket:", bucketError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to create storage bucket', details: bucketError }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+    }
     
     // Upload the file to storage
     const { data: storageData, error: storageError } = await supabase
@@ -61,8 +90,44 @@ serve(async (req) => {
       .from('documents')
       .getPublicUrl(storagePath);
 
-    const publicUrl = publicUrlData.publicUrl;
+    const publicUrl = publicUrlData?.publicUrl;
     console.log(`File uploaded successfully. Public URL: ${publicUrl}`);
+
+    // Check if documents table exists, if not create it
+    const { error: tableCheckError } = await supabase
+      .from('documents')
+      .select('id')
+      .limit(1);
+
+    if (tableCheckError && tableCheckError.message.includes("relation \"documents\" does not exist")) {
+      console.log("Creating documents table...");
+      const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS public.documents (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          title TEXT NOT NULL,
+          file_name TEXT NOT NULL,
+          file_path TEXT NOT NULL,
+          file_size INTEGER,
+          content_type TEXT,
+          status TEXT DEFAULT 'uploaded',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+        );
+
+        -- Enable RLS
+        ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
+        
+        -- Create policy for admin users
+        CREATE POLICY "Allow full access to admins" 
+        ON public.documents 
+        USING (true);
+      `;
+      
+      // Execute the SQL in Supabase's SQL runner
+      await supabase.rpc('execute_query', {
+        query_text: createTableQuery
+      });
+    }
 
     // Insert the document record into the database
     const { data: documentData, error: documentError } = await supabase
@@ -70,7 +135,7 @@ serve(async (req) => {
       .insert({
         title: file.name,
         file_name: file.name,
-        file_path: storagePath, // Use the same path used for storage
+        file_path: storagePath,
         file_size: file.size,
         content_type: file.type,
         status: 'uploaded'
@@ -92,7 +157,8 @@ serve(async (req) => {
       JSON.stringify({ 
         message: 'Document uploaded successfully', 
         documentId: documentData.id,
-        filePath: storagePath
+        filePath: storagePath,
+        publicUrl: publicUrl
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
