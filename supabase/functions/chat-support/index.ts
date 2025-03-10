@@ -47,6 +47,10 @@ async function generateResponse(question, context) {
 
   try {
     // Check if the context is empty or just contains whitespace
+    const context = chunks && Array.isArray(chunks) && chunks.length > 0 
+      ? chunks.map(chunk => chunk.content) 
+      : [];
+    
     const isContextEmpty = !context || context.length === 0 || context.every(item => !item || item.trim() === '');
     console.log("Context status - isEmpty:", isContextEmpty, "Context items:", context.length);
     
