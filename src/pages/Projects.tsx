@@ -16,7 +16,7 @@ const projects: ProjectCard[] = [
     title: "Supply Chain Sentinel",
     description: "A comprehensive supply chain management platform that combines risk analysis, delay prediction, visualization, and scenario planning in one powerful solution.",
     icon: <AlertTriangle className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-sc-sentinel.lovable.app/",
+    url: "practicalaiml-sc-sentinel.netlify.app",
     tags: ["Supply Chain", "Risk Management", "AI"],
     features: [
       "Disruption Impact Analysis: Model financial and operational impacts of supply chain disruptions",
@@ -29,7 +29,7 @@ const projects: ProjectCard[] = [
     title: "Retail Rhythm AI",
     description: "An intelligent retail platform that tackles personalization and inventory management challenges through advanced AI/ML solutions.",
     icon: <ShoppingCart className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-retail.lovable.app/",
+    url: "practicalaiml-retail.netlify.app",
     tags: ["Retail", "E-commerce", "Personalization"],
     features: [
       "Collaborative Filtering: Sophisticated recommendation engine that analyzes purchase patterns",
@@ -42,7 +42,7 @@ const projects: ProjectCard[] = [
     title: "Diagnose Pathway",
     description: "A healthcare AI solution that addresses challenges in medical diagnostics and predictive patient outcomes while maintaining data privacy and regulatory compliance.",
     icon: <Stethoscope className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-diagnose.lovable.app/",
+    url: "practicalaiml-diagnose.netlify.app",
     tags: ["Healthcare", "Diagnostics", "Privacy"],
     features: [
       "CNN Medical Imaging Analysis: Advanced detection and classification of anomalies in X-rays and MRIs",
@@ -55,7 +55,7 @@ const projects: ProjectCard[] = [
     title: "Finance Fortress",
     description: "A financial services platform that addresses fraud detection and risk assessment challenges through cutting-edge AI solutions with a focus on explainability.",
     icon: <DollarSign className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-finance.lovable.app/",
+    url: "practicalaiml-finance.netlify.app",
     tags: ["Finance", "Fraud Detection", "Risk Assessment"],
     features: [
       "Anomaly Detection: Identify unusual patterns and potential fraud with Isolation Forest and Autoencoders",
@@ -68,7 +68,7 @@ const projects: ProjectCard[] = [
     title: "AI Manufacture Magic",
     description: "A manufacturing intelligence platform that solves predictive maintenance and quality control challenges through innovative AI/ML implementations.",
     icon: <Factory className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-manufacture.lovable.app/",
+    url: "practicalaiml-manufacture.netlify.app",
     tags: ["Manufacturing", "Maintenance", "Quality Control"],
     features: [
       "Sensor Data Analysis: Use Random Forests on IoT data to predict equipment failures before they occur",
@@ -108,11 +108,48 @@ const projects: ProjectCard[] = [
     ]
   },
   {
+    title: "Transport Cost Auditor",
+    description: "AI assisted transport audit and air/sea scenario planning",
+    icon: <Brain className="w-10 h-10 text-primary" />,
+    url: "practicalaiml-transport-audit.netlify.app",
+    tags: ["Transport", "Cost","Audit","AI", "NLP"],
+    features: [
+      "Natural Language Database Query: Ask questions about transport cost in plain English",
+      "Cost Optimization Scenarios: AI-driven simulations for shipment mode mix cost simulation"
+    ]
+  },
+  {
+    title: "Transport Smart Chain",
+    description: "AI assisted block chain for transport cost and contract manament",
+    icon: <Brain className="w-10 h-10 text-primary" />,
+    url: "practicalaiml-transport-chain.netlify.app",
+    tags: ["Transport", "smart contract","Chain","AI", "NLP"],
+    features: [
+      "Block chain for transprot contract, invoice, transaction management",
+      "Provide transparence and consistence in the supply chain"
+    ]
+  },
+  {
+    title: "Last mile orchestrator",
+    description: "AI assisted last mile routes, loading, and analytics",
+    icon: <Brain className="w-10 h-10 text-primary" />,
+    url: "https://practicalaiml-lastmile.netlify.app/",
+    tags: ["Lastmile", "AI"],
+    features: [
+      "Last mile delivery routes and loads optimizer",
+      "Optimize your delivery operations with smart route planning, real-time tracking, and advanced analytics for the modern Asian market."
+    ]
+  },
+  {
     title: "Freight Consolidation Planner",
     description: "An AI-powered solution that helps combine multiple shipments into a single truck or container to reduce costs for IT industry in Asia.",
     icon: <Box className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-freight-synergy.lovable.app/",
-    tags: ["Logistics", "Cost Optimization", "AI"]
+    url: "practicalaiml-freight-synergy.netlify.app",
+    tags: ["Logistics", "Cost Optimization", "AI"],
+    features: [
+      "Consolidate shipments optimizer",
+      "Optimize routes and consolidations for inbound logistics"
+    ]
   }
 ];
 
