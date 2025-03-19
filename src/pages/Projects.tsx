@@ -16,7 +16,7 @@ const projects: ProjectCard[] = [
     title: "Supply Chain Sentinel",
     description: "A comprehensive supply chain management platform that combines risk analysis, delay prediction, visualization, and scenario planning in one powerful solution.",
     icon: <AlertTriangle className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-sc-sentinel.netlify.app",
+    url: "https://practicalaiml-sc-sentinel.netlify.app",
     tags: ["Supply Chain", "Risk Management", "AI"],
     features: [
       "Disruption Impact Analysis: Model financial and operational impacts of supply chain disruptions",
@@ -29,7 +29,7 @@ const projects: ProjectCard[] = [
     title: "Retail Rhythm AI",
     description: "An intelligent retail platform that tackles personalization and inventory management challenges through advanced AI/ML solutions.",
     icon: <ShoppingCart className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-retail.netlify.app",
+    url: "https://practicalaiml-retail.netlify.app",
     tags: ["Retail", "E-commerce", "Personalization"],
     features: [
       "Collaborative Filtering: Sophisticated recommendation engine that analyzes purchase patterns",
@@ -42,7 +42,7 @@ const projects: ProjectCard[] = [
     title: "Diagnose Pathway",
     description: "A healthcare AI solution that addresses challenges in medical diagnostics and predictive patient outcomes while maintaining data privacy and regulatory compliance.",
     icon: <Stethoscope className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-diagnose.netlify.app",
+    url: "https://practicalaiml-diagnose.netlify.app",
     tags: ["Healthcare", "Diagnostics", "Privacy"],
     features: [
       "CNN Medical Imaging Analysis: Advanced detection and classification of anomalies in X-rays and MRIs",
@@ -55,7 +55,7 @@ const projects: ProjectCard[] = [
     title: "Finance Fortress",
     description: "A financial services platform that addresses fraud detection and risk assessment challenges through cutting-edge AI solutions with a focus on explainability.",
     icon: <DollarSign className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-finance.netlify.app",
+    url: "https://practicalaiml-finance.netlify.app",
     tags: ["Finance", "Fraud Detection", "Risk Assessment"],
     features: [
       "Anomaly Detection: Identify unusual patterns and potential fraud with Isolation Forest and Autoencoders",
@@ -68,7 +68,7 @@ const projects: ProjectCard[] = [
     title: "AI Manufacture Magic",
     description: "A manufacturing intelligence platform that solves predictive maintenance and quality control challenges through innovative AI/ML implementations.",
     icon: <Factory className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-manufacture.netlify.app",
+    url: "https://practicalaiml-manufacture.netlify.app",
     tags: ["Manufacturing", "Maintenance", "Quality Control"],
     features: [
       "Sensor Data Analysis: Use Random Forests on IoT data to predict equipment failures before they occur",
@@ -81,7 +81,7 @@ const projects: ProjectCard[] = [
     title: "Last-Mile Delivery Orchestrator",
     description: "A comprehensive suite of applications designed to optimize last-mile delivery operations, enhance customer satisfaction, and improve driver experience.",
     icon: <Truck className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-lastmile.lovable.app/",
+    url: "https://practicalaiml-lastmile.netlify.app/",
     tags: ["Logistics", "Delivery", "Optimization"],
     features: [
       "Customer Satisfaction Feedback Tracker: Real-time feedback analysis for continuous improvement",
@@ -95,7 +95,7 @@ const projects: ProjectCard[] = [
     title: "Invent AI",
     description: "A revolutionary inventory management system powered by advanced AI, natural language processing, and reinforcement learning for optimal stock control and cost reduction.",
     icon: <Brain className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-inventory.lovable.app/",
+    url: "https://practicalaiml-inventory.netlify.app/",
     tags: ["Inventory", "AI", "NLP"],
     features: [
       "Natural Language Database Query: Ask questions about inventory in plain English",
@@ -111,7 +111,7 @@ const projects: ProjectCard[] = [
     title: "Transport Cost Auditor",
     description: "AI assisted transport audit and air/sea scenario planning",
     icon: <Brain className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-transport-audit.netlify.app",
+    url: "https://practicalaiml-transport-audit.netlify.app",
     tags: ["Transport", "Cost","Audit","AI", "NLP"],
     features: [
       "Natural Language Database Query: Ask questions about transport cost in plain English",
@@ -122,7 +122,7 @@ const projects: ProjectCard[] = [
     title: "Transport Smart Chain",
     description: "AI assisted block chain for transport cost and contract manament",
     icon: <Brain className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-transport-chain.netlify.app",
+    url: "https://practicalaiml-transport-chain.netlify.app",
     tags: ["Transport", "smart contract","Chain","AI", "NLP"],
     features: [
       "Block chain for transprot contract, invoice, transaction management",
@@ -130,21 +130,10 @@ const projects: ProjectCard[] = [
     ]
   },
   {
-    title: "Last mile orchestrator",
-    description: "AI assisted last mile routes, loading, and analytics",
-    icon: <Brain className="w-10 h-10 text-primary" />,
-    url: "https://practicalaiml-lastmile.netlify.app/",
-    tags: ["Lastmile", "AI"],
-    features: [
-      "Last mile delivery routes and loads optimizer",
-      "Optimize your delivery operations with smart route planning, real-time tracking, and advanced analytics for the modern Asian market."
-    ]
-  },
-  {
     title: "Freight Consolidation Planner",
     description: "An AI-powered solution that helps combine multiple shipments into a single truck or container to reduce costs for IT industry in Asia.",
     icon: <Box className="w-10 h-10 text-primary" />,
-    url: "practicalaiml-freight-synergy.netlify.app",
+    url: "https://practicalaiml-freight-synergy.netlify.app",
     tags: ["Logistics", "Cost Optimization", "AI"],
     features: [
       "Consolidate shipments optimizer",
