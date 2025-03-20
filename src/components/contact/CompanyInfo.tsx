@@ -13,24 +13,9 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({ onChatClick }) => {
       <h2 className="text-xl font-semibold mb-4">Our Information</h2>
       
       <div className="space-y-4">
-        <div>
-          <h3 className="font-medium">Address</h3>
-          <p className="text-muted-foreground">To be updated soon<br />Tallawong 2762 NSW</p>
-        </div>
-        
-        <div>
+               <div>
           <h3 className="font-medium">Email</h3>
           <p className="text-muted-foreground">support@practicalaiml.com.au</p>
-        </div>
-        
-        <div>
-          <h3 className="font-medium">Phone</h3>
-          <p className="text-muted-foreground">0437 443 634</p>
-        </div>
-        
-        <div>
-          <h3 className="font-medium">Business Hours</h3>
-          <p className="text-muted-foreground">Monday - Friday: 9:00 AM - 5:00 PM<br />Saturday - Sunday: Closed</p>
         </div>
       </div>
       
